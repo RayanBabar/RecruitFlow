@@ -15,9 +15,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  profile   Profile?
-  jobs      Job[]    // Jobs posted if employer
-  applications Application[] // Applications if seeker
+  profile       Profile?
+  jobs          Job[]         @relation("EmployerJobs")  // Jobs posted if employer
+  applications  Application[] @relation("SeekerApplications") // Applications if seeker
 }
 
 enum Role {
@@ -40,7 +40,7 @@ model Profile {
 model Job {
   id          String   @id @default(cuid())
   employerId  String
-  employer    User     @relation(fields: [employerId], references: [id])
+  employer    User     @relation("EmployerJobs", fields: [employerId], references: [id])
   title       String
   company     String
   location    String
@@ -59,10 +59,11 @@ model Application {
   id         String   @id @default(cuid())
   jobId      String
   job        Job      @relation(fields: [jobId], references: [id])
-  seekerId   String
-  seeker     User     @relation(fields: [seekerId], references: [id])
-  status     String   @default("APPLIED") // APPLIED, SCREENING, INTERVIEWING, OFFER
-  matchScore Float?   // 0.0 to 100.0 AI match score
+  seekerId    String
+  seeker      User     @relation("SeekerApplications", fields: [seekerId], references: [id])
+  status      String   @default("APPLIED") // APPLIED, SHORTLISTED, INTERVIEWING, OFFER, REJECTED
+  matchScore  Float?   // 0.0 to 100.0 AI match score
+  aiFeedback  String?  // AI feedback text from resume parser
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
