@@ -118,22 +118,22 @@ export default function PostJobPage() {
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="font-bold text-xs text-foreground uppercase tracking-widest block">Job Title *</label>
-              <Input ref={titleRef} placeholder="e.g. Senior Software Engineer" className="border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-colors font-bold text-sm" />
+              <Input ref={titleRef} placeholder="e.g. Senior Software Engineer" className="h-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-colors font-bold text-sm" />
             </div>
             <div className="space-y-2">
               <label className="font-bold text-xs text-foreground uppercase tracking-widest block">Company *</label>
-              <Input ref={companyRef} placeholder="e.g. Acme Corp" className="border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-colors font-bold text-sm" />
+              <Input ref={companyRef} placeholder="e.g. Acme Corp" className="h-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-colors font-bold text-sm" />
             </div>
             <div className="space-y-2">
               <label className="font-bold text-xs text-foreground uppercase tracking-widest block">Location *</label>
-              <Input ref={locationRef} placeholder="e.g. Remote or New York, NY" className="border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-colors font-bold text-sm" />
+              <Input ref={locationRef} placeholder="e.g. Remote or New York, NY" className="h-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-colors font-bold text-sm" />
             </div>
             <div className="space-y-2">
               <label className="font-bold text-xs text-foreground uppercase tracking-widest block">Job Type</label>
               <select
                 value={selectedJobType}
                 onChange={(e) => setSelectedJobType(e.target.value)}
-                className="w-full px-4 py-2 border-2 border-border bg-background text-foreground font-bold text-sm focus:outline-none focus:border-foreground transition-colors rounded-none"
+                className="h-10 w-full px-4 border-2 border-border bg-background text-foreground font-bold text-sm focus:outline-none focus:border-foreground transition-colors rounded-none"
               >
                 {jobTypes.map((t) => <option key={t}>{t}</option>)}
               </select>
@@ -141,9 +141,9 @@ export default function PostJobPage() {
             <div className="space-y-2">
               <label className="font-bold text-xs text-foreground uppercase tracking-widest block">Salary Range</label>
               <div className="flex gap-2">
-                <Input ref={salaryMinRef} placeholder="$80,000" className="border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground font-bold text-sm" />
+                <Input ref={salaryMinRef} placeholder="$80,000" className="h-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground font-bold text-sm" />
                 <span className="flex items-center font-black text-muted-foreground">—</span>
-                <Input ref={salaryMaxRef} placeholder="$120,000" className="border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground font-bold text-sm" />
+                <Input ref={salaryMaxRef} placeholder="$120,000" className="h-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground font-bold text-sm" />
               </div>
             </div>
             <div className="space-y-2 md:col-span-2">
