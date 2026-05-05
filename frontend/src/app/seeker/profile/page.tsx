@@ -24,6 +24,7 @@ interface ParsedResume {
   experience: { role: string; company: string; duration: string; description: string }[];
   match_score: number;
   feedback: string;
+  resume_text?: string;
 }
 
 export default function ProfilePage() {
@@ -76,6 +77,7 @@ export default function ProfilePage() {
           skills: skillsStr,
           experience: experienceStr,
           resumeUrl: `/uploads/${file.name}`,
+          resumeText: result.resume_text,
         }),
       });
 

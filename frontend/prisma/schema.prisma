@@ -33,6 +33,7 @@ model Profile {
   skills     String?  // JSON string or comma separated
   experience String?  // Text block
   resumeUrl  String?
+  resumeText String?  // Full extracted text from PDF
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }

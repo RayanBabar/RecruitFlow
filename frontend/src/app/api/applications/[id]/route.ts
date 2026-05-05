@@ -7,6 +7,43 @@ export const dynamic = "force-dynamic";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
+// GET /api/applications/[id] — fetch a single application with seeker profile
+export async function GET(req: Request, context: RouteContext) {
+  try {
+    const { id } = await context.params;
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+    const application = await prisma.application.findUnique({
+      where: { id },
+      include: {
+        seeker: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profile: true,
+          },
+        },
+        job: {
+          select: {
+            id: true,
+            title: true,
+            company: true,
+            location: true,
+            requirements: true,
+          },
+        },
+      },
+    });
+
+    if (!application) return NextResponse.json({ message: "Not found" }, { status: 404 });
+    return NextResponse.json(application);
+  } catch (error) {
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+  }
+}
+
 // PATCH /api/applications/[id] — employer updates status
 export async function PATCH(req: Request, context: RouteContext) {
   try {

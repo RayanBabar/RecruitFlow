@@ -9,7 +9,13 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const employerId = searchParams.get("employerId");
+    let employerId = searchParams.get("employerId");
+
+    // Resolve "me" to the actual session user ID
+    if (employerId === "me") {
+      const session = await getServerSession(authOptions);
+      employerId = (session?.user as any)?.id ?? null;
+    }
 
     const where = employerId
       ? { employerId }

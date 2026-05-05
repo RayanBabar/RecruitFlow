@@ -33,9 +33,9 @@ export async function GET(req: Request) {
         where: { jobId },
         include: {
           seeker: {
-            select: { id: true, name: true, email: true },
-            include: { profile: true } as any,
+            select: { id: true, name: true, email: true, profile: true },
           },
+          job: { select: { id: true, title: true, company: true, location: true, type: true } },
         },
         orderBy: { matchScore: "desc" },
       });
@@ -50,8 +50,8 @@ export async function GET(req: Request) {
       applications = await prisma.application.findMany({
         where: { jobId: { in: jobIds } },
         include: {
-          job: { select: { id: true, title: true, company: true } },
-          seeker: { select: { id: true, name: true, email: true } },
+          job: { select: { id: true, title: true, company: true, location: true, type: true } },
+          seeker: { select: { id: true, name: true, email: true, profile: true } },
         },
         orderBy: { matchScore: "desc" },
       });

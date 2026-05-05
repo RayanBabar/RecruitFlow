@@ -34,10 +34,10 @@ apiClient.interceptors.response.use(
 export const ResumeAPI = {
   parseResume: async (file: File, jobDescription: string) => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("resume_file", file);
     formData.append("job_description", jobDescription);
 
-    const response = await axios.post(`${API_URL}/resume/parse`, formData, {
+    const response = await axios.post(`${API_URL}/parse-resume`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

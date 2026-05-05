@@ -40,7 +40,7 @@ export async function PUT(req: Request) {
 
     const userId = (session.user as any).id;
     const body = await req.json();
-    const { skills, experience, resumeUrl, parsedData } = body;
+    const { skills, experience, resumeUrl, resumeText, parsedData } = body;
 
     const profile = await prisma.profile.upsert({
       where: { userId },
@@ -49,11 +49,13 @@ export async function PUT(req: Request) {
         skills: skills ?? null,
         experience: experience ?? null,
         resumeUrl: resumeUrl ?? null,
+        resumeText: resumeText ?? null,
       },
       update: {
         skills: skills ?? undefined,
         experience: experience ?? undefined,
         resumeUrl: resumeUrl ?? undefined,
+        resumeText: resumeText ?? undefined,
       },
     });
 

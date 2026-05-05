@@ -1,7 +1,7 @@
 "use client";
 
 import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout";
-import { DollarSign, Clock, Bookmark, Flame, ThumbsUp, SlidersHorizontal, Loader2 } from "lucide-react";
+import { DollarSign, Clock, Bookmark, Flame, ThumbsUp, SlidersHorizontal, Loader2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -14,6 +14,8 @@ interface Job {
   location: string;
   salary?: string;
   type: string;
+  description: string;
+  requirements?: string;
   createdAt: string;
   _count: { applications: number };
   employer: { name: string };
@@ -26,6 +28,9 @@ export default function FindJobsPage() {
   const [applyingId, setApplyingId] = useState<string | null>(null);
   const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState("Newest");
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
+  const [isCheckingScore, setIsCheckingScore] = useState<string | null>(null);
+  const [scores, setScores] = useState<{ [key: string]: { match_score: number; feedback: string } }>({});
 
   useEffect(() => {
     fetch("/api/jobs")
@@ -47,11 +52,17 @@ export default function FindJobsPage() {
     setApplyingId(job.id);
 
     try {
-      // Apply without AI score (no resume uploaded yet) — just create the application
+      const scoreData = scores[job.id];
+      const payload = {
+        jobId: job.id,
+        matchScore: scoreData?.match_score,
+        aiFeedback: scoreData?.feedback,
+      };
+
       const res = await fetch("/api/applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobId: job.id }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -72,6 +83,34 @@ export default function FindJobsPage() {
     if (sortBy === "Newest") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     return 0;
   });
+
+  const handleCheckScore = async (jobId: string) => {
+    if (isCheckingScore) return;
+    setIsCheckingScore(jobId);
+
+    try {
+      const res = await fetch(`/api/jobs/${jobId}/score`, {
+        method: "POST",
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.message || "Failed to check score. Have you uploaded your resume?");
+        return;
+      }
+
+      const data = await res.json();
+      setScores((prev) => ({
+        ...prev,
+        [jobId]: { match_score: data.match_score, feedback: data.feedback },
+      }));
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred while checking your score.");
+    } finally {
+      setIsCheckingScore(null);
+    }
+  };
 
   return (
     <DashboardLayout role="seeker">
@@ -177,19 +216,79 @@ export default function FindJobsPage() {
                             </div>
                           </div>
                           <button
-                            onClick={() => handleApply(job)}
-                            disabled={isApplied || isApplying}
-                            className={`font-bold text-xs uppercase tracking-widest px-5 py-2 border-2 transition-all ${
-                              isApplied
-                                ? "bg-green-500 text-white border-green-500 cursor-default"
-                                : isApplying
-                                ? "bg-primary/50 text-primary-foreground border-transparent cursor-not-allowed"
-                                : "bg-primary text-primary-foreground border-transparent hover:border-foreground opacity-0 group-hover:opacity-100 focus:opacity-100"
-                            }`}
+                            onClick={() => setExpandedJobId(expandedJobId === job.id ? null : job.id)}
+                            className="font-bold text-xs uppercase tracking-widest px-5 py-2 border-2 border-border text-foreground hover:bg-secondary transition-all"
                           >
-                            {isApplied ? "✓ Applied" : isApplying ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply Now"}
+                            {expandedJobId === job.id ? "Hide Details" : "View Details"}
                           </button>
                         </div>
+
+                        {/* Expanded Details Section */}
+                        {expandedJobId === job.id && (
+                          <motion.div 
+                            initial={{ opacity: 0, height: 0 }} 
+                            animate={{ opacity: 1, height: "auto" }} 
+                            className="mt-6 pt-6 border-t-2 border-border space-y-6"
+                          >
+                            <div className="space-y-4">
+                              <div>
+                                <h4 className="font-black text-sm uppercase tracking-widest text-foreground mb-2">Job Description</h4>
+                                <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{job.description}</p>
+                              </div>
+                              {job.requirements && (
+                                <div>
+                                  <h4 className="font-black text-sm uppercase tracking-widest text-foreground mb-2 flex items-center gap-2">
+                                    <Flame className="w-4 h-4 text-primary" /> AI Screening Criteria
+                                  </h4>
+                                  <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{job.requirements}</p>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="bg-secondary/30 border-2 border-border p-5 flex flex-col items-center justify-center gap-4">
+                              {scores[job.id] ? (
+                                <div className="w-full space-y-4">
+                                  <div className="flex items-center gap-4 bg-background border-2 border-primary/30 p-4">
+                                    <div className="w-16 h-16 rounded-full border-4 border-primary flex items-center justify-center font-black text-xl text-primary shrink-0">
+                                      {Math.round(scores[job.id].match_score)}
+                                    </div>
+                                    <div>
+                                      <h4 className="font-black text-sm uppercase tracking-widest">AI Match Analysis</h4>
+                                      <p className="text-xs text-muted-foreground font-medium mt-1">{scores[job.id].feedback}</p>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={() => handleApply(job)}
+                                    disabled={isApplied || isApplying}
+                                    className={`w-full font-black text-sm uppercase tracking-widest py-4 border-2 transition-all ${
+                                      isApplied
+                                        ? "bg-green-500 text-white border-green-500 cursor-default"
+                                        : isApplying
+                                        ? "bg-primary/50 text-primary-foreground border-transparent cursor-not-allowed"
+                                        : "bg-primary text-primary-foreground border-transparent hover:border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] active:translate-y-1 active:shadow-none"
+                                    }`}
+                                  >
+                                    {isApplied ? "✓ Application Submitted" : isApplying ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Submit Application with Score"}
+                                  </button>
+                                </div>
+                              ) : (
+                                <>
+                                  <p className="font-bold text-xs text-muted-foreground uppercase tracking-widest text-center">
+                                    Check how well your profile matches this role before applying.
+                                  </p>
+                                  <button
+                                    onClick={() => handleCheckScore(job.id)}
+                                    disabled={isCheckingScore === job.id}
+                                    className="bg-background text-foreground border-2 border-border hover:border-primary font-bold text-xs uppercase tracking-widest px-6 py-3 flex items-center gap-2 transition-all"
+                                  >
+                                    {isCheckingScore === job.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-primary" />}
+                                    {isCheckingScore === job.id ? "Analyzing Match..." : "Check Match Score"}
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
                       </div>
                     </div>
                   </motion.div>

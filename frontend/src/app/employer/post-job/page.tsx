@@ -43,6 +43,10 @@ export default function PostJobPage() {
     const salaryMax = salaryMaxRef.current?.value?.trim();
     const salary = salaryMin && salaryMax ? `${salaryMin} - ${salaryMax}` : salaryMin || salaryMax || null;
 
+    const reqText = requirementsRef.current?.value?.trim() || "";
+    const skillsText = selectedSkills.length > 0 ? `Required Skills: ${selectedSkills.join(", ")}` : "";
+    const finalRequirements = [reqText, skillsText].filter(Boolean).join("\n\n") || null;
+
     setIsLoading(true);
     try {
       const res = await fetch("/api/jobs", {
@@ -55,7 +59,7 @@ export default function PostJobPage() {
           type: selectedJobType,
           salary,
           description,
-          requirements: requirementsRef.current?.value?.trim() || null,
+          requirements: finalRequirements,
         }),
       });
 
@@ -198,21 +202,42 @@ export default function PostJobPage() {
               className="w-full p-4 border-2 border-border outline-none font-medium text-sm bg-background text-foreground focus:border-foreground transition-colors rounded-none resize-none placeholder:text-muted-foreground"
               placeholder="e.g. 5+ years of React experience, strong knowledge of Node.js, experience with AWS..."
             />
-            <div className="flex flex-wrap gap-2 mt-2">
-              {selectedSkills.map((skill) => (
-                <span key={skill} className="bg-secondary border-2 border-border text-foreground px-3 py-1 font-bold text-xs uppercase tracking-widest flex items-center gap-2">
-                  {skill}
-                  <button type="button" onClick={() => setSelectedSkills((prev) => prev.filter((s) => s !== skill))} className="hover:text-rose-500 transition-colors">
-                    <X className="w-3 h-3" />
+            <div className="flex flex-col gap-2 mt-4">
+              <label className="font-bold text-xs text-foreground uppercase tracking-widest block">Add Required Skills</label>
+              <div className="flex flex-wrap gap-2 items-center p-2 border-2 border-border bg-background focus-within:border-foreground transition-colors min-h-[48px]">
+                {selectedSkills.map((skill) => (
+                  <span key={skill} className="bg-secondary border-2 border-border text-foreground px-3 py-1 font-bold text-xs uppercase tracking-widest flex items-center gap-2">
+                    {skill}
+                    <button type="button" onClick={() => setSelectedSkills((prev) => prev.filter((s) => s !== skill))} className="hover:text-rose-500 transition-colors">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+                <input
+                  type="text"
+                  placeholder="Type a skill and press Enter or comma..."
+                  className="flex-1 bg-transparent border-none outline-none font-medium text-sm min-w-[200px]"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                      e.preventDefault();
+                      const val = e.currentTarget.value.trim().replace(/,+$/, '');
+                      if (val && !selectedSkills.includes(val)) {
+                        setSelectedSkills([...selectedSkills, val]);
+                      }
+                      e.currentTarget.value = '';
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2 items-center">
+                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Suggestions:</span>
+                {exampleSkills.filter((s) => !selectedSkills.includes(s)).slice(0, 5).map((skill) => (
+                  <button key={skill} type="button" onClick={() => setSelectedSkills((prev) => [...prev, skill])}
+                    className="border-2 border-dashed border-border text-muted-foreground hover:border-foreground hover:text-foreground px-2 py-0.5 font-bold text-[10px] uppercase tracking-widest transition-colors">
+                    + {skill}
                   </button>
-                </span>
-              ))}
-              {exampleSkills.filter((s) => !selectedSkills.includes(s)).slice(0, 3).map((skill) => (
-                <button key={skill} type="button" onClick={() => setSelectedSkills((prev) => [...prev, skill])}
-                  className="border-2 border-dashed border-border text-muted-foreground hover:border-foreground hover:text-foreground px-3 py-1 font-bold text-xs uppercase tracking-widest transition-colors">
-                  + {skill}
-                </button>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
