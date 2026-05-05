@@ -9,12 +9,14 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
+import ReactMarkdown from "react-markdown";
 
 interface Application {
   id: string;
   status: string;
   matchScore: number | null;
   aiFeedback: string | null;
+  aiRequirementChecks: string | null;
   createdAt: string;
   seeker: {
     id: string;
@@ -72,14 +74,32 @@ export default function CandidateAnalysisPage({ params }: { params: Promise<{ id
     }
   };
 
-  const skills: string[] = application?.seeker.profile?.skills
-    ? application.seeker.profile.skills.split(",").map((s) => s.trim()).filter(Boolean)
-    : [];
+  const parseSkills = (raw?: string | null) => {
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.flatMap(s => typeof s === 'string' ? s.split(/[•,]/) : []).map(s => s.trim().replace(/^[-*]\s*/, '')).filter(Boolean);
+      }
+    } catch {}
+    return raw.split(/[,•\n]/).map((s) => s.trim().replace(/^[-*]\s*/, '')).filter(Boolean);
+  };
+
+  const skills: string[] = parseSkills(application?.seeker.profile?.skills);
+  const allSkillsText = skills.join(" ").toLowerCase();
 
   const experience: any[] = (() => {
     try {
       return application?.seeker.profile?.experience
         ? JSON.parse(application.seeker.profile.experience)
+        : [];
+    } catch { return []; }
+  })();
+
+  const aiRequirements: any[] = (() => {
+    try {
+      return application?.aiRequirementChecks
+        ? JSON.parse(application.aiRequirementChecks)
         : [];
     } catch { return []; }
   })();
@@ -224,7 +244,19 @@ export default function CandidateAnalysisPage({ params }: { params: Promise<{ id
                   <Sparkles className="text-primary w-5 h-5" />
                   <h3 className="text-xl font-black text-foreground tracking-tighter uppercase">AI Match Summary</h3>
                 </div>
-                <p className="font-medium text-sm text-foreground leading-relaxed whitespace-pre-wrap">{application.aiFeedback}</p>
+                <div className="prose prose-sm dark:prose-invert max-w-none text-foreground font-medium">
+                  <ReactMarkdown
+                    components={{
+                      strong: ({node, ...props}) => <span className="font-bold text-foreground" {...props} />,
+                      p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
+                      ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                      ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                      li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
+                    }}
+                  >
+                    {application.aiFeedback}
+                  </ReactMarkdown>
+                </div>
               </div>
             ) : (
               <div className="bg-secondary/30 border-2 border-dashed border-border p-6">
@@ -236,47 +268,39 @@ export default function CandidateAnalysisPage({ params }: { params: Promise<{ id
               </div>
             )}
 
-            {/* Skills */}
-            {skills.length > 0 && (
-              <div className="bg-card border-2 border-border p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <h3 className="text-xl font-black text-foreground uppercase tracking-tighter mb-4 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" /> Extracted Skills
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {skills.map((s) => (
-                    <span key={s} className="bg-primary/10 text-primary border-2 border-primary/30 px-3 py-1 font-bold text-xs uppercase tracking-widest">{s}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Experience */}
-            {experience.length > 0 && (
-              <div className="bg-card border-2 border-border p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <h3 className="text-xl font-black text-foreground uppercase tracking-tighter mb-6">Experience</h3>
-                <div className="relative pl-6 border-l-2 border-border flex flex-col gap-8">
-                  {experience.map((exp: any, idx) => (
-                    <div key={idx} className="relative">
-                      <div className={`absolute -left-[27px] top-1 w-4 h-4 border-2 border-card ${idx === 0 ? "bg-primary" : "bg-muted-foreground"}`} />
-                      <h4 className="font-black text-base text-foreground tracking-tighter">{exp.role ?? exp.title}</h4>
-                      <p className="font-bold text-xs uppercase tracking-widest mt-0.5">
-                        <span className="text-primary">{exp.company}</span>
-                        {(exp.duration ?? exp.period) && <span className="text-muted-foreground ml-2">• {exp.duration ?? exp.period}</span>}
-                      </p>
-                      {exp.description && <p className="font-medium text-xs text-muted-foreground mt-2 leading-relaxed">{exp.description}</p>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Requirements vs Skills checklist */}
-            {requirements.length > 0 && skills.length > 0 && (
+            {aiRequirements.length > 0 ? (
+              <div className="bg-card border-2 border-border p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <h3 className="text-xl font-black text-foreground uppercase tracking-tighter mb-6">AI Requirements Check</h3>
+                <ul className="space-y-4">
+                  {aiRequirements.map((req, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      {req.meets_requirement
+                        ? <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+                        : <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />}
+                      <div>
+                        <p className="font-bold text-sm text-foreground">{req.requirement}</p>
+                        {req.reason && <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{req.reason}</p>}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : requirements.length > 0 && skills.length > 0 ? (
               <div className="bg-card border-2 border-border p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <h3 className="text-xl font-black text-foreground uppercase tracking-tighter mb-6">Requirements Check</h3>
                 <ul className="space-y-3">
                   {requirements.map((req, i) => {
-                    const matched = skills.some((s) => req.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(req.toLowerCase().split(" ")[0]));
+                    const cleanReq = req.replace(/^(Required Skills|Experience|Skills|Requirements?):?\s*/i, "").trim().toLowerCase();
+                    const keywords = cleanReq.split(/[\s\W]+/).filter(w => w.length > 3 || ["ai", "ml", "ui", "ux", "go", "js"].includes(w));
+                    
+                    let matched = false;
+                    if (allSkillsText.includes(cleanReq)) {
+                      matched = true;
+                    } else if (keywords.length > 0) {
+                      matched = keywords.some(kw => allSkillsText.includes(kw));
+                    }
+
                     return (
                       <li key={i} className="flex items-start gap-3">
                         {matched
@@ -288,7 +312,7 @@ export default function CandidateAnalysisPage({ params }: { params: Promise<{ id
                   })}
                 </ul>
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Right Column: Resume / Info Viewer */}

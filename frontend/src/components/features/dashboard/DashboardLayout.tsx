@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+
 import { Sidebar } from "./Sidebar";
-import { Search, Bell, MessageSquare } from "lucide-react";
+import { Search, Bell, MessageSquare, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
 import { employerDashboardData, seekerDashboardData, dashboardNav } from "@/data/mockData";
 
 interface DashboardLayoutProps {
@@ -66,6 +68,14 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
               <div className="w-10 h-10 bg-secondary border-2 border-border flex items-center justify-center font-bold text-lg cursor-pointer hover:border-foreground transition-colors">
                 {userData.initials}
               </div>
+              
+              <button 
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 border-2 border-transparent hover:border-red-500/20 p-2 transition-colors ml-2"
+                title="Sign Out"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </header>

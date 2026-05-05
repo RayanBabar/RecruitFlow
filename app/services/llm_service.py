@@ -26,15 +26,17 @@ USE_MODAL = os.getenv("USE_MODAL", "true").lower() != "false"
 # Fallback: local Ollama model (unchanged from original)
 LOCAL_MODEL_NAME = "batiai/gemma4-e2b:q4"
 
-# Shared system prompt
 SYSTEM_PROMPT = (
     "You are an expert technical recruiter and AI resume analyzer. "
     "Compare the Resume against the Job Description. "
     "Extract the candidate's skills, education, and experience. "
+    "Carefully evaluate the candidate's resume against EACH specific requirement in the Job Description. "
+    "For each requirement, determine if the candidate meets it, and provide a one-sentence reason justifying your decision. "
     "Calculate a realistic match_score from 0.0 to 100.0 based on skill overlap and experience relevance. "
     "Provide feedback justifying the score and highlighting areas for improvement. "
     "Return ONLY valid JSON conforming to this schema — no markdown, no extra text:\n"
     '{"skills":["..."],'
+    '"requirement_checks":[{"requirement":"...","meets_requirement":true,"reason":"..."}],'
     '"education":[{"degree":"...","institution":"...","year":"..."}],'
     '"experience":[{"role":"...","company":"...","duration":"...","description":"..."}],'
     '"match_score":75.0,'

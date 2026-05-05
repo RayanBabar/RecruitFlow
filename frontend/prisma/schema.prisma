@@ -66,6 +66,7 @@ model Application {
   status      String   @default("APPLIED") // APPLIED, SHORTLISTED, INTERVIEWING, OFFER, REJECTED
   matchScore  Float?   // 0.0 to 100.0 AI match score
   aiFeedback  String?  // AI feedback text from resume parser
+  aiRequirementChecks String? // JSON array of AI requirement evaluations
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

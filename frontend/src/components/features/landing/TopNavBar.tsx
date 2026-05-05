@@ -4,8 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { landingData } from "@/data/mockData";
 import { motion } from "framer-motion";
+import { useSession, signOut } from "next-auth/react";
 
 export function TopNavBar() {
+  const { data: session, status } = useSession();
+
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -34,12 +37,25 @@ export function TopNavBar() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground uppercase tracking-wider text-xs font-bold rounded-none">
-            <Link href="/login">Login</Link>
-          </Button>
-          <Button asChild className="uppercase tracking-wider text-xs font-bold rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]">
-            <Link href="/signup">Sign Up</Link>
-          </Button>
+          {status === "authenticated" ? (
+            <>
+              <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground uppercase tracking-wider text-xs font-bold rounded-none">
+                <Link href={session.user?.role === "EMPLOYER" ? "/employer/dashboard" : "/seeker/find-jobs"}>Dashboard</Link>
+              </Button>
+              <Button onClick={() => signOut({ callbackUrl: "/" })} className="uppercase tracking-wider text-xs font-bold rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]">
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground uppercase tracking-wider text-xs font-bold rounded-none">
+                <Link href="/login">Login</Link>
+              </Button>
+              <Button asChild className="uppercase tracking-wider text-xs font-bold rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]">
+                <Link href="/signup">Sign Up</Link>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </motion.header>

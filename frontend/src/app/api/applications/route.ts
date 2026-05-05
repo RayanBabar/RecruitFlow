@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { jobId, matchScore, aiFeedback } = body;
+    const { jobId, matchScore, aiFeedback, requirementChecks } = body;
 
     if (!jobId) {
       return NextResponse.json({ message: "jobId is required" }, { status: 400 });
@@ -97,6 +97,7 @@ export async function POST(req: Request) {
         status: "APPLIED",
         matchScore: matchScore ?? null,
         aiFeedback: aiFeedback ?? null,
+        aiRequirementChecks: requirementChecks ? JSON.stringify(requirementChecks) : null,
       },
     });
 

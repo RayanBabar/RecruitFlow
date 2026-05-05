@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { ResumeAPI } from "@/lib/api";
+import ReactMarkdown from "react-markdown";
 
 interface Job {
   id: string;
@@ -30,7 +31,7 @@ export default function FindJobsPage() {
   const [sortBy, setSortBy] = useState("Newest");
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [isCheckingScore, setIsCheckingScore] = useState<string | null>(null);
-  const [scores, setScores] = useState<{ [key: string]: { match_score: number; feedback: string } }>({});
+  const [scores, setScores] = useState<{ [key: string]: { match_score: number; feedback: string; requirement_checks?: any[] } }>({});
   const [viewedJobs, setViewedJobs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export default function FindJobsPage() {
         jobId: job.id,
         matchScore: scoreData?.match_score,
         aiFeedback: scoreData?.feedback,
+        requirementChecks: scoreData?.requirement_checks,
       };
 
       const res = await fetch("/api/applications", {
@@ -103,7 +105,7 @@ export default function FindJobsPage() {
       const data = await res.json();
       setScores((prev) => ({
         ...prev,
-        [jobId]: { match_score: data.match_score, feedback: data.feedback },
+        [jobId]: { match_score: data.match_score, feedback: data.feedback, requirement_checks: data.requirement_checks },
       }));
     } catch (err) {
       console.error(err);
@@ -265,28 +267,45 @@ export default function FindJobsPage() {
                             <div className="bg-secondary/30 border-2 border-border p-5 flex flex-col items-center justify-center gap-4">
                               {scores[job.id] ? (
                                 <div className="w-full space-y-4">
-                                  <div className="flex items-center gap-4 bg-background border-2 border-primary/30 p-4">
-                                    <div className="w-16 h-16 rounded-full border-4 border-primary flex items-center justify-center font-black text-xl text-primary shrink-0">
-                                      {Math.round(scores[job.id].match_score)}
+                                  <div className="flex flex-col md:flex-row items-start gap-6 bg-background border-2 border-primary/30 p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
+                                    <div className="flex flex-col items-center shrink-0 w-full md:w-auto">
+                                      <div className="w-20 h-20 rounded-full border-4 border-primary flex items-center justify-center font-black text-3xl text-primary mb-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.1)]">
+                                        {Math.round(scores[job.id].match_score)}
+                                      </div>
+                                      <span className="font-bold text-[10px] text-muted-foreground uppercase tracking-widest text-center">Match Score</span>
                                     </div>
-                                    <div>
-                                      <h4 className="font-black text-sm uppercase tracking-widest">AI Match Analysis</h4>
-                                      <p className="text-xs text-muted-foreground font-medium mt-1">{scores[job.id].feedback}</p>
+                                    <div className="flex-1 w-full min-w-0">
+                                      <h4 className="font-black text-sm uppercase tracking-widest mb-3 border-b-2 border-border pb-2 text-foreground">AI Match Analysis</h4>
+                                      <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none">
+                                        <ReactMarkdown
+                                          components={{
+                                            strong: ({node, ...props}) => <span className="font-bold text-foreground" {...props} />,
+                                            p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
+                                            ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                                            ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                                            li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
+                                          }}
+                                        >
+                                          {scores[job.id].feedback}
+                                        </ReactMarkdown>
+                                      </div>
                                     </div>
                                   </div>
-                                  <button
-                                    onClick={() => handleApply(job)}
-                                    disabled={isApplied || isApplying}
-                                    className={`w-full font-black text-sm uppercase tracking-widest py-4 border-2 transition-all ${
-                                      isApplied
-                                        ? "bg-green-500 text-white border-green-500 cursor-default"
-                                        : isApplying
-                                        ? "bg-primary/50 text-primary-foreground border-transparent cursor-not-allowed"
-                                        : "bg-primary text-primary-foreground border-transparent hover:border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] active:translate-y-1 active:shadow-none"
-                                    }`}
-                                  >
-                                    {isApplied ? "✓ Application Submitted" : isApplying ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Submit Application with Score"}
-                                  </button>
+                                  <div className="flex justify-end pt-2">
+                                    <button
+                                      onClick={() => handleApply(job)}
+                                      disabled={isApplied || isApplying}
+                                      className={`px-8 font-black text-xs uppercase tracking-widest py-3 border-2 transition-all ${
+                                        isApplied
+                                          ? "bg-green-500 text-white border-green-500 cursor-default"
+                                          : isApplying
+                                          ? "bg-primary/50 text-primary-foreground border-transparent cursor-not-allowed"
+                                          : "bg-primary text-primary-foreground border-transparent hover:border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] active:translate-y-1 active:shadow-none"
+                                      }`}
+                                    >
+                                      {isApplied ? "✓ Application Submitted" : isApplying ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Submit Application with Score"}
+                                    </button>
+                                  </div>
                                 </div>
                               ) : (
                                 <>
