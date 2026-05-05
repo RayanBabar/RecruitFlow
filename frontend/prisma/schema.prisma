@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(SEEKER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile   Profile?
+  jobs      Job[]    // Jobs posted if employer
+  applications Application[] // Applications if seeker
+}
+
+enum Role {
+  EMPLOYER
+  SEEKER
+  ADMIN
+}
+
+model Profile {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills     String?  // JSON string or comma separated
+  experience String?  // Text block
+  resumeUrl  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  employerId  String
+  employer    User     @relation(fields: [employerId], references: [id])
+  title       String
+  company     String
+  location    String
+  type        String
+  salary      String?
+  description String
+  requirements String? // JSON string or text
+  status      String   @default("OPEN")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  applications Application[]
+}
+
+model Application {
+  id         String   @id @default(cuid())
+  jobId      String
+  job        Job      @relation(fields: [jobId], references: [id])
+  seekerId   String
+  seeker     User     @relation(fields: [seekerId], references: [id])
+  status     String   @default("APPLIED") // APPLIED, SCREENING, INTERVIEWING, OFFER
+  matchScore Float?   // 0.0 to 100.0 AI match score
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([jobId, seekerId]) // A user can only apply to a job once
+}

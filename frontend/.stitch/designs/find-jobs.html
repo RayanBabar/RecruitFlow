@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RecruitFlow - Job Board</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "border-soft": "#E2E8F0",
+                        "on-surface": "#1b1b24",
+                        "on-primary-fixed": "#0f0069",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "surface-base": "#F8FAFC",
+                        "on-tertiary-container": "#ffd2be",
+                        "match-high-bg": "#DCFCE7",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#505f76",
+                        "text-secondary": "#64748B",
+                        "tertiary-fixed": "#ffdbcc",
+                        "match-med-bg": "#FEF9C3",
+                        "on-secondary-container": "#54647a",
+                        "surface-tint": "#4d44e3",
+                        "brand-primary": "#4F46E5",
+                        "on-tertiary-fixed": "#351000",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "on-error": "#ffffff",
+                        "surface-container": "#f0ecf9",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "primary-container": "#4f46e5",
+                        "match-low-text": "#991B1B",
+                        "secondary-container": "#d0e1fb",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "on-secondary-fixed": "#0b1c30",
+                        "match-high-text": "#166534",
+                        "surface-container-highest": "#e4e1ee",
+                        "inverse-on-surface": "#f3effc",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "match-low-bg": "#FEE2E2",
+                        "tertiary-container": "#a44100",
+                        "surface-container-high": "#eae6f4",
+                        "surface-card": "#FFFFFF",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-variant": "#e4e1ee",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#dad7ff",
+                        "background": "#fcf8ff",
+                        "brand-hover": "#4338CA",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "primary": "#3525cd",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f5f2ff",
+                        "surface": "#fcf8ff",
+                        "inverse-surface": "#302f39",
+                        "tertiary": "#7e3000",
+                        "outline-variant": "#c7c4d8",
+                        "surface-dim": "#dcd8e5",
+                        "primary-fixed": "#e2dfff",
+                        "text-primary": "#0F172A",
+                        "on-surface-variant": "#464555",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#c3c0ff",
+                        "match-med-text": "#854D0E",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fcf8ff",
+                        "on-background": "#1b1b24",
+                        "outline": "#777587"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "1.5rem",
+                        "element-gap": "1rem",
+                        "section-gap": "2rem",
+                        "sidebar-width": "16rem"
+                    },
+                    "fontFamily": {
+                        "h1": ["Inter"],
+                        "micro": ["Inter"],
+                        "h2": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.025em", "fontWeight": "600"}],
+                        "micro": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "h2": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "display": ["36px", {"lineHeight": "40px", "letterSpacing": "-0.025em", "fontWeight": "700"}],
+                        "body": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface-base text-text-primary min-h-screen flex flex-col md:flex-row">
+<!-- SideNavBar -->
+<nav class="bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 w-64 h-screen fixed left-0 top-0 hidden md:flex flex-col z-50">
+<div class="px-6 py-6 border-b border-border-soft">
+<h1 class="text-lg font-black text-indigo-600 dark:text-indigo-400">RecruitFlow</h1>
+<p class="font-micro text-text-secondary">Enterprise HR</p>
+</div>
+<div class="flex flex-col h-full py-6 space-y-2 overflow-y-auto">
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-['Inter'] text-sm font-semibold scale-100 active:scale-95 duration-150 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-r-4 border-indigo-600 flex items-center gap-3 px-4 py-3 font-['Inter'] text-sm font-semibold scale-100 active:scale-95 duration-150 rounded-l-lg ml-2" href="#">
+<span class="material-symbols-outlined" data-icon="work">work</span>
+                Jobs
+            </a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-['Inter'] text-sm font-semibold scale-100 active:scale-95 duration-150 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="people">people</span>
+                Candidates
+            </a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-['Inter'] text-sm font-semibold scale-100 active:scale-95 duration-150 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+                Interviews
+            </a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-['Inter'] text-sm font-semibold scale-100 active:scale-95 duration-150 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                Analytics
+            </a>
+<!-- Filters Section within Sidebar -->
+<div class="mt-8 px-6">
+<h3 class="font-micro text-text-secondary uppercase mb-4">Filters</h3>
+<!-- Job Type -->
+<div class="mb-6">
+<label class="font-body text-text-primary font-medium block mb-2">Job Type</label>
+<div class="space-y-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input checked="" class="rounded border-border-soft text-brand-primary focus:ring-brand-primary w-4 h-4" type="checkbox"/>
+<span class="font-body text-text-secondary group-hover:text-text-primary transition-colors">Full-time</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="rounded border-border-soft text-brand-primary focus:ring-brand-primary w-4 h-4" type="checkbox"/>
+<span class="font-body text-text-secondary group-hover:text-text-primary transition-colors">Contract</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="rounded border-border-soft text-brand-primary focus:ring-brand-primary w-4 h-4" type="checkbox"/>
+<span class="font-body text-text-secondary group-hover:text-text-primary transition-colors">Part-time</span>
+</label>
+</div>
+</div>
+<!-- Work Mode -->
+<div class="mb-6">
+<label class="font-body text-text-primary font-medium block mb-2">Work Mode</label>
+<div class="space-y-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input checked="" class="rounded border-border-soft text-brand-primary focus:ring-brand-primary w-4 h-4" type="checkbox"/>
+<span class="font-body text-text-secondary group-hover:text-text-primary transition-colors">Remote</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="rounded border-border-soft text-brand-primary focus:ring-brand-primary w-4 h-4" type="checkbox"/>
+<span class="font-body text-text-secondary group-hover:text-text-primary transition-colors">Hybrid</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="rounded border-border-soft text-brand-primary focus:ring-brand-primary w-4 h-4" type="checkbox"/>
+<span class="font-body text-text-secondary group-hover:text-text-primary transition-colors">On-site</span>
+</label>
+</div>
+</div>
+<!-- Salary Slider (Visual) -->
+<div>
+<label class="font-body text-text-primary font-medium block mb-2">Salary Range</label>
+<input class="w-full accent-brand-primary h-1 bg-border-soft rounded-full appearance-none cursor-pointer" max="250" min="50" type="range" value="120"/>
+<div class="flex justify-between mt-2">
+<span class="font-micro text-text-secondary">$50k</span>
+<span class="font-micro text-text-secondary">$250k+</span>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-border-soft">
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-['Inter'] text-sm font-semibold scale-100 active:scale-95 duration-150 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Settings
+                </a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-['Inter'] text-sm font-semibold scale-100 active:scale-95 duration-150 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                    Help
+                </a>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:ml-sidebar-width flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-slate-50 dark:bg-slate-950 sticky top-0 z-40 w-full flex justify-between items-center px-6 h-16 border-b border-slate-200 dark:border-slate-800 flat font-['Inter'] text-sm">
+<div class="flex-1 max-w-2xl">
+<div class="relative flex items-center focus-within:ring-2 focus-within:ring-indigo-500 rounded-lg bg-surface-card border border-border-soft shadow-sm overflow-hidden">
+<span class="material-symbols-outlined text-text-secondary ml-3" data-icon="search">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 font-body text-text-primary placeholder-text-secondary py-2 pr-4 pl-2 outline-none" placeholder="Search jobs, skills, or companies..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-element-gap ml-4">
+<button class="text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full p-2 transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+</button>
+<button class="bg-surface-card border border-border-soft text-text-primary px-4 py-2 rounded-lg font-body font-medium hover:bg-surface-dim transition-colors shadow-sm hidden md:block">
+                    Post Job
+                </button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-soft bg-surface-dim ml-2 flex-shrink-0 cursor-pointer">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close-up, high-quality corporate headshot of a professional user in a well-lit, modern office setting. The lighting is soft and neutral, enhancing a clean, contemporary enterprise aesthetic. The subject is slightly off-center, wearing professional attire against a blurred, bright background, conveying trust and efficiency suitable for an enterprise HR platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrw3nWiT8A9RnvgwLhjAWtURzUZ53vaRySGqOCNtSBqxPoYLjs12tsK9fNAOrQ277KABp8s2mVN7ilK-nAEGe-0j6yO4hyXfjW0fymA2iaVwul8l6bJI1fcBcCWtLtuO5_8LFWD2TtLOqzi4HXO_qxGiRj7p_Rel4EROfWvhKsVOioFrMz_tq8Ehpogv-x9eRdmZLTe50pZN3m92thT-Z2T_mq8xVgX5DKtGjjwG68sk5Q-2Ca1GpfCUrladh4JJXA_BI-jJGh3MmZ"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-container-padding lg:p-section-gap overflow-y-auto bg-surface-base">
+<div class="max-w-5xl mx-auto">
+<div class="mb-element-gap flex justify-between items-end">
+<div>
+<h2 class="font-display text-text-primary">Recommended Jobs</h2>
+<p class="font-body text-text-secondary mt-1">Based on your profile and search history.</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-micro text-text-secondary uppercase">Sort by:</span>
+<select class="bg-transparent border-none font-body text-text-primary font-medium focus:ring-0 cursor-pointer pl-0 pr-8 py-1">
+<option>Best Match</option>
+<option>Newest</option>
+<option>Highest Salary</option>
+</select>
+</div>
+</div>
+<!-- Job List -->
+<div class="space-y-4">
+<!-- Job Card 1 -->
+<div class="bg-surface-card border border-border-soft rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group relative">
+<div class="absolute top-6 right-6 flex items-start gap-3">
+<div class="bg-match-high-bg text-match-high-text font-micro px-3 py-1 rounded-full flex items-center gap-1 border border-match-high-bg">
+<span class="material-symbols-outlined text-[14px]" data-icon="local_fire_department" data-weight="fill">local_fire_department</span>
+                                92% Match
+                            </div>
+<button class="text-text-secondary hover:text-brand-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+</button>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-dim border border-border-soft flex items-center justify-center flex-shrink-0 overflow-hidden">
+<img alt="TechNova Logo" class="w-full h-full object-cover" data-alt="A sleek, abstract modern corporate logo design for a fictitious tech company named TechNova. The logo features geometric shapes in a cool blue and silver color palette, set against a pristine white background. The style is flat but layered, reflecting a highly efficient, intelligent, and professional modern enterprise visual identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA1AKsQYmPPVZwI-Y-UA6EQFuPriRS7H0dWzT4SR1SOtsEbRrzM1RTu2PmVNihFILSYp8Ts2i_uos3StRwdh3jBO5n8_eB-jthYihUAe-OcCOVJlLWPoJ7TJT1-XWjb-UbNGiXw6Obxap8XxEgUgcpaJALWuvzSPR9iNWpebxB8DIRKKrq6kOZIWxGutq5Ia2UAi5oMmIgGeHJZ_uO7hNCp2YDbfWkWWqJV9VTYSTchU_JG7aXalsvQlCqqsHX5i5g0e8SAIHp7e4p"/>
+</div>
+<div class="flex-1">
+<h3 class="font-h2 text-text-primary mb-1 pr-32">Senior Frontend Engineer</h3>
+<p class="font-body text-text-secondary mb-3">TechNova Systems • San Francisco, CA (Hybrid)</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-surface-container font-micro text-on-surface px-2.5 py-1 rounded-full border border-border-soft">React</span>
+<span class="bg-surface-container font-micro text-on-surface px-2.5 py-1 rounded-full border border-border-soft">TypeScript</span>
+<span class="bg-surface-container font-micro text-on-surface px-2.5 py-1 rounded-full border border-border-soft">Tailwind CSS</span>
+</div>
+<div class="flex items-center justify-between mt-4 pt-4 border-t border-border-soft">
+<div class="flex items-center gap-4">
+<div class="flex items-center text-text-primary font-body font-medium">
+<span class="material-symbols-outlined text-[18px] text-text-secondary mr-1.5" data-icon="payments">payments</span>
+                                            $140k - $180k
+                                        </div>
+<div class="flex items-center text-text-secondary font-body text-sm">
+<span class="material-symbols-outlined text-[18px] mr-1.5" data-icon="schedule">schedule</span>
+                                            Posted 2h ago
+                                        </div>
+</div>
+<button class="bg-brand-primary hover:bg-brand-hover text-on-primary font-body font-medium px-6 py-2 rounded-lg transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+                                        Apply Now
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Job Card 2 -->
+<div class="bg-surface-card border border-border-soft rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group relative">
+<div class="absolute top-6 right-6 flex items-start gap-3">
+<div class="bg-match-med-bg text-match-med-text font-micro px-3 py-1 rounded-full flex items-center gap-1 border border-match-med-bg">
+<span class="material-symbols-outlined text-[14px]" data-icon="thumb_up">thumb_up</span>
+                                78% Match
+                            </div>
+<button class="text-text-secondary hover:text-brand-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+</button>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-dim border border-border-soft flex items-center justify-center flex-shrink-0 overflow-hidden">
+<img alt="GlobalData Logo" class="w-full h-full object-cover" data-alt="A minimalist, geometric corporate logo for a data analytics company. The design utilizes sharp, clean lines forming an abstract chart or data flow motif in subtle grayscale and indigo tones on a stark white background. The aesthetic is crisp, professional, and aligns with modern enterprise SaaS branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1v1PQ2mFiBc8IFoCbICwoz5SExvZ9EcU954BcqaVax0l-w3Oq_Z4DsHVinL96dvuZ-SOECwMTk1lh9yETXPUktxO6zW1mkG495yK0OaETSbBHTL9ci7g18IPTmqmYkYG8Mpc_G54x310K0lEgG3cYfJ4pWAR9G_X86iomHfZ31goXdRjYYFUFcmgDHqr4owC1aRQGVjb0ctgTMVByZcJa_dfqUt5YnIR0lI_1YGNNBLQlhXPw0uHg8cDG82OtJLp8erlG3Qu3pNNA"/>
+</div>
+<div class="flex-1">
+<h3 class="font-h2 text-text-primary mb-1 pr-32">Product Designer (UI/UX)</h3>
+<p class="font-body text-text-secondary mb-3">GlobalData Analytics • Remote</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-surface-container font-micro text-on-surface px-2.5 py-1 rounded-full border border-border-soft">Figma</span>
+<span class="bg-surface-container font-micro text-on-surface px-2.5 py-1 rounded-full border border-border-soft">Design Systems</span>
+<span class="bg-surface-container font-micro text-on-surface px-2.5 py-1 rounded-full border border-border-soft">Prototyping</span>
+</div>
+<div class="flex items-center justify-between mt-4 pt-4 border-t border-border-soft">
+<div class="flex items-center gap-4">
+<div class="flex items-center text-text-primary font-body font-medium">
+<span class="material-symbols-outlined text-[18px] text-text-secondary mr-1.5" data-icon="payments">payments</span>
+                                            $120k - $150k
+                                        </div>
+<div class="flex items-center text-text-secondary font-body text-sm">
+<span class="material-symbols-outlined text-[18px] mr-1.5" data-icon="schedule">schedule</span>
+                                            Posted 1d ago
+                                        </div>
+</div>
+<button class="bg-brand-primary hover:bg-brand-hover text-on-primary font-body font-medium px-6 py-2 rounded-lg transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+                                        Apply Now
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

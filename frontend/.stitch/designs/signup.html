@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up - RecruitFlow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "border-soft": "#E2E8F0",
+                        "on-surface": "#1b1b24",
+                        "on-primary-fixed": "#0f0069",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "surface-base": "#F8FAFC",
+                        "on-tertiary-container": "#ffd2be",
+                        "match-high-bg": "#DCFCE7",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#505f76",
+                        "text-secondary": "#64748B",
+                        "tertiary-fixed": "#ffdbcc",
+                        "match-med-bg": "#FEF9C3",
+                        "on-secondary-container": "#54647a",
+                        "surface-tint": "#4d44e3",
+                        "brand-primary": "#4F46E5",
+                        "on-tertiary-fixed": "#351000",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "on-error": "#ffffff",
+                        "surface-container": "#f0ecf9",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "primary-container": "#4f46e5",
+                        "match-low-text": "#991B1B",
+                        "secondary-container": "#d0e1fb",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "on-secondary-fixed": "#0b1c30",
+                        "match-high-text": "#166534",
+                        "surface-container-highest": "#e4e1ee",
+                        "inverse-on-surface": "#f3effc",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "match-low-bg": "#FEE2E2",
+                        "tertiary-container": "#a44100",
+                        "surface-container-high": "#eae6f4",
+                        "surface-card": "#FFFFFF",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-variant": "#e4e1ee",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#dad7ff",
+                        "background": "#fcf8ff",
+                        "brand-hover": "#4338CA",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "primary": "#3525cd",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f5f2ff",
+                        "surface": "#fcf8ff",
+                        "inverse-surface": "#302f39",
+                        "tertiary": "#7e3000",
+                        "outline-variant": "#c7c4d8",
+                        "surface-dim": "#dcd8e5",
+                        "primary-fixed": "#e2dfff",
+                        "text-primary": "#0F172A",
+                        "on-surface-variant": "#464555",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#c3c0ff",
+                        "match-med-text": "#854D0E",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fcf8ff",
+                        "on-background": "#1b1b24",
+                        "outline": "#777587"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "1.5rem",
+                        "element-gap": "1rem",
+                        "section-gap": "2rem",
+                        "sidebar-width": "16rem"
+                    },
+                    "fontFamily": {
+                        "h1": ["Inter"],
+                        "micro": ["Inter"],
+                        "h2": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h1": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.025em", "fontWeight": "600" }],
+                        "micro": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "h2": ["18px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "display": ["36px", { "lineHeight": "40px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+                        "body": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface-base font-body text-body text-text-primary h-screen w-full flex">
+<!-- Left Side: Testimonial & Branding (Hidden on mobile) -->
+<div class="hidden lg:flex w-1/2 bg-brand-primary p-12 flex-col justify-between relative overflow-hidden">
+<!-- Abstract Background Pattern -->
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<svg class="absolute w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M0,0 L100,100 M100,0 L0,100" fill="none" stroke="currentColor" stroke-width="0.5"></path>
+</svg>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 32px;">stream</span>
+<span class="font-display text-display text-white">RecruitFlow</span>
+</div>
+</div>
+<div class="relative z-10 max-w-lg mt-auto">
+<span class="material-symbols-outlined text-white/30 text-5xl mb-4" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+<p class="font-h1 text-h1 text-white mb-8">
+                "RecruitFlow completely transformed our hiring velocity. The AI insights allow us to spot top talent instantly, reducing our time-to-hire by over 40% while improving candidate quality."
+            </p>
+<div class="flex items-center gap-4">
+<img alt="Sarah Jenkins, VP of HR" class="w-12 h-12 rounded-full border-2 border-white/20 object-cover" data-alt="A professional headshot of a confident female executive in her early 40s. She has a warm smile and is wearing a dark blazer over a light blouse. The background is a slightly blurred, modern corporate office with bright, natural daylight. The image has a clean, high-contrast aesthetic fitting a premium enterprise SaaS brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6NrOKI1cYupio4BNCoSUxRyVfluSYUBj3nQxHjTTdndxmuaNJMjLrr-yIRd9M0sr7RhW4GY72Z3Co71FXEuJgC4EoYy75s8Kgp2sRM3dWMpUUEwZeV-EMbfy3MFGaqL6ESsn6QzM4FRM37cmtqTok9LVvxzKFVXAVjcWwOv5aRvOwmoDAWebVDWB4QF-vfZvCoqQdT77ZIdgxm9el-WnyeuCRJB7hEu_2xxqnz3ZlHFGczl-yslhiMYjCxS8RHJvwSYOXnWx_mtwy"/>
+<div>
+<div class="font-body text-body font-semibold text-white">Sarah Jenkins</div>
+<div class="font-micro text-micro text-white/70">VP of Talent Acquisition, TechGlobal</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side: Sign Up Form -->
+<div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 overflow-y-auto">
+<div class="w-full max-w-md space-y-8">
+<div class="text-center">
+<div class="lg:hidden flex items-center justify-center gap-2 text-brand-primary mb-6">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 32px;">stream</span>
+<span class="font-display text-h1 text-brand-primary">RecruitFlow</span>
+</div>
+<h1 class="font-display text-display text-text-primary mb-2">Create an account</h1>
+<p class="font-body text-body text-text-secondary">Join thousands of companies hiring top talent.</p>
+</div>
+<form class="space-y-6">
+<!-- Role Selector -->
+<div class="space-y-3">
+<label class="font-micro text-micro text-text-secondary uppercase">I am a</label>
+<div class="grid grid-cols-2 gap-4">
+<label class="relative cursor-pointer">
+<input checked="" class="peer sr-only" name="role" type="radio" value="employer"/>
+<div class="p-4 border border-border-soft rounded-lg bg-surface-card peer-checked:border-brand-primary peer-checked:ring-1 peer-checked:ring-brand-primary transition-all flex flex-col items-center gap-2 hover:bg-slate-50">
+<span class="material-symbols-outlined text-text-secondary peer-checked:text-brand-primary" style="font-variation-settings: 'FILL' 1;">business</span>
+<span class="font-body text-body font-medium text-text-primary">Employer</span>
+</div>
+</label>
+<label class="relative cursor-pointer">
+<input class="peer sr-only" name="role" type="radio" value="jobseeker"/>
+<div class="p-4 border border-border-soft rounded-lg bg-surface-card peer-checked:border-brand-primary peer-checked:ring-1 peer-checked:ring-brand-primary transition-all flex flex-col items-center gap-2 hover:bg-slate-50">
+<span class="material-symbols-outlined text-text-secondary peer-checked:text-brand-primary" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-body text-body font-medium text-text-primary">Job Seeker</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Form Fields -->
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="font-micro text-micro text-text-primary" for="firstName">First Name</label>
+<input class="w-full px-3 py-2 bg-surface-card border border-border-soft rounded-DEFAULT text-body font-body focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition-all" id="firstName" placeholder="Jane" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="font-micro text-micro text-text-primary" for="lastName">Last Name</label>
+<input class="w-full px-3 py-2 bg-surface-card border border-border-soft rounded-DEFAULT text-body font-body focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition-all" id="lastName" placeholder="Doe" type="text"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-micro text-micro text-text-primary" for="email">Work Email</label>
+<input class="w-full px-3 py-2 bg-surface-card border border-border-soft rounded-DEFAULT text-body font-body focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition-all" id="email" placeholder="jane@company.com" type="email"/>
+</div>
+<div class="space-y-1">
+<label class="font-micro text-micro text-text-primary" for="password">Password</label>
+<input class="w-full px-3 py-2 bg-surface-card border border-border-soft rounded-DEFAULT text-body font-body focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition-all" id="password" placeholder="••••••••" type="password"/>
+<!-- Password Strength Meter -->
+<div class="mt-2 space-y-1">
+<div class="flex gap-1 h-1.5 w-full">
+<div class="h-full w-1/4 bg-brand-primary rounded-full"></div>
+<div class="h-full w-1/4 bg-brand-primary rounded-full"></div>
+<div class="h-full w-1/4 bg-border-soft rounded-full"></div>
+<div class="h-full w-1/4 bg-border-soft rounded-full"></div>
+</div>
+<p class="font-micro text-micro text-text-secondary text-right">Fair</p>
+</div>
+</div>
+<button class="w-full py-2.5 px-4 bg-brand-primary text-white font-body text-body font-medium rounded-DEFAULT hover:bg-brand-hover transition-colors shadow-sm flex items-center justify-center gap-2" type="button">
+                    Create Account
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</form>
+<div class="relative">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-border-soft"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="px-2 bg-surface-base text-text-secondary font-body">Or continue with</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 px-4 py-2 border border-border-soft rounded-DEFAULT bg-surface-card hover:bg-slate-50 transition-colors font-body text-body font-medium text-text-primary" type="button">
+<img alt="Google" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrCQ7D2flEOnhr4S8W5BG-bi952Bn4UoocKv8_TYXxRHE2GxnOlbtHFSghLIE80axN9iU9VLhTRH3tsVlxG6IT_g5wgAO1Sx1pHY3-epf7S30XOhmbqfEQKCxtmdvKUA_GRnkXW3RLYtPvwPG_s-PgAqxr7OLlPwDtqKAzurd8mo5Bdgn-cJqRKx4C3kJjmtS7lbgX4D9tC7Jpntar49YkrYMBLqiNAUmubw31mv32H3lCP91rnriGYF0u2ZFkQGwF10CCm_98I4Xy"/>
+                    Google
+                </button>
+<button class="flex items-center justify-center gap-2 px-4 py-2 border border-border-soft rounded-DEFAULT bg-surface-card hover:bg-slate-50 transition-colors font-body text-body font-medium text-text-primary" type="button">
+<img alt="GitHub" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBinpm-DyGgAVgMRK20IdYOjM0eeJ-nLQjgxyZPaqAg1olCI-1boyFV8nq28LdAQyV5Q0GT4INZfus_2Ywmt4tLMQTJBB5dyAdANj3bgMygyYrXZVqNNBTJvmdYW1FJW9dlrEAUW7sF8YkSircQPeAJZz8V7AleoHmNcdPn_HAUqbwmNA0UK2_TSnK3g5Ic1UX2aNA-ItTWeu-dqy2ObNaCtgn8oYhOhFfEcCOgo7FMAqRr9UasIUNBBcKArAIWhGZK2EWZ0QkIixQe"/>
+                    GitHub
+                </button>
+</div>
+<p class="text-center font-body text-body text-text-secondary mt-8">
+                Already have an account? <a class="text-brand-primary hover:text-brand-hover font-medium transition-colors" href="#">Log in</a>
+</p>
+</div>
+</div>
+</body></html>

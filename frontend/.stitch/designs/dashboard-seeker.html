@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RecruitFlow - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "border-soft": "#E2E8F0",
+                      "on-surface": "#1b1b24",
+                      "on-primary-fixed": "#0f0069",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "surface-base": "#F8FAFC",
+                      "on-tertiary-container": "#ffd2be",
+                      "match-high-bg": "#DCFCE7",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#505f76",
+                      "text-secondary": "#64748B",
+                      "tertiary-fixed": "#ffdbcc",
+                      "match-med-bg": "#FEF9C3",
+                      "on-secondary-container": "#54647a",
+                      "surface-tint": "#4d44e3",
+                      "brand-primary": "#4F46E5",
+                      "on-tertiary-fixed": "#351000",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "on-error": "#ffffff",
+                      "surface-container": "#f0ecf9",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "primary-container": "#4f46e5",
+                      "match-low-text": "#991B1B",
+                      "secondary-container": "#d0e1fb",
+                      "on-tertiary-fixed-variant": "#7b2f00",
+                      "on-secondary-fixed": "#0b1c30",
+                      "match-high-text": "#166534",
+                      "surface-container-highest": "#e4e1ee",
+                      "inverse-on-surface": "#f3effc",
+                      "tertiary-fixed-dim": "#ffb695",
+                      "match-low-bg": "#FEE2E2",
+                      "tertiary-container": "#a44100",
+                      "surface-container-high": "#eae6f4",
+                      "surface-card": "#FFFFFF",
+                      "secondary-fixed": "#d3e4fe",
+                      "surface-variant": "#e4e1ee",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#dad7ff",
+                      "background": "#fcf8ff",
+                      "brand-hover": "#4338CA",
+                      "on-primary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "primary": "#3525cd",
+                      "error-container": "#ffdad6",
+                      "surface-container-low": "#f5f2ff",
+                      "surface": "#fcf8ff",
+                      "inverse-surface": "#302f39",
+                      "tertiary": "#7e3000",
+                      "outline-variant": "#c7c4d8",
+                      "surface-dim": "#dcd8e5",
+                      "primary-fixed": "#e2dfff",
+                      "text-primary": "#0F172A",
+                      "on-surface-variant": "#464555",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-primary": "#c3c0ff",
+                      "match-med-text": "#854D0E",
+                      "on-tertiary": "#ffffff",
+                      "surface-bright": "#fcf8ff",
+                      "on-background": "#1b1b24",
+                      "outline": "#777587"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "container-padding": "1.5rem",
+                      "element-gap": "1rem",
+                      "section-gap": "2rem",
+                      "sidebar-width": "16rem"
+              },
+              "fontFamily": {
+                      "h1": [
+                              "Inter"
+                      ],
+                      "micro": [
+                              "Inter"
+                      ],
+                      "h2": [
+                              "Inter"
+                      ],
+                      "display": [
+                              "Inter"
+                      ],
+                      "body": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "h1": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.025em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "micro": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "h2": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display": [
+                              "36px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.025em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface-base text-text-primary font-body antialiased selection:bg-brand-primary selection:text-white">
+<!-- SideNavBar -->
+<nav class="bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 font-['Inter'] text-sm font-semibold w-64 h-screen fixed left-0 top-0 hidden md:flex flex-col border-r border-slate-200 dark:border-slate-800 flat no shadows z-50">
+<div class="px-6 py-6 border-b border-border-soft shrink-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-brand-primary flex items-center justify-center text-white font-bold">
+                    R
+                </div>
+<div>
+<h1 class="text-lg font-black text-indigo-600 dark:text-indigo-400 leading-tight">RecruitFlow</h1>
+<span class="text-micro text-text-secondary block">Enterprise HR</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col h-full py-6 space-y-2 overflow-y-auto px-2">
+<!-- Active Tab -->
+<a class="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-r-4 border-indigo-600 flex items-center gap-3 px-4 py-3 scale-100 active:scale-95 duration-150 transition-all rounded-r-none rounded-l-DEFAULT" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all scale-100 active:scale-95 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined" data-icon="work">work</span>
+<span>Jobs</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all scale-100 active:scale-95 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined" data-icon="people">people</span>
+<span>Candidates</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all scale-100 active:scale-95 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+<span>Interviews</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all scale-100 active:scale-95 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+</div>
+<div class="mt-auto border-t border-border-soft py-4 px-2 shrink-0">
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all scale-100 active:scale-95 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all scale-100 active:scale-95 duration-150 rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Help</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="md:ml-sidebar-width min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-slate-50 dark:bg-slate-950 text-indigo-600 dark:text-indigo-400 font-['Inter'] text-sm sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 flat flex justify-between items-center px-6 h-16">
+<div class="flex-1 flex items-center max-w-md">
+<div class="relative w-full focus-within:ring-2 focus-within:ring-indigo-500 rounded-DEFAULT transition-all duration-200">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-card border border-border-soft rounded-DEFAULT text-text-primary focus:outline-none placeholder:text-text-secondary text-body font-body" placeholder="Search jobs, companies, or keywords..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full p-2 transition-all duration-200 relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-primary rounded-full"></span>
+</button>
+<button class="text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full p-2 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+</button>
+<button class="hidden sm:block px-4 py-2 bg-white border border-border-soft rounded-DEFAULT text-text-primary hover:bg-surface-base transition-colors font-body text-body font-medium shadow-sm">
+                    Post Job
+                </button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-soft cursor-pointer">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a young male professional in a light, modern corporate environment. The lighting is soft and flattering, typical of high-end enterprise applications. The overall color palette leans towards clean whites, soft grays, and a touch of warm skin tones, fitting seamlessly into a structured UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCoQYl7N5UL2hWl-vcfcLqs8Oa_SbL_lVFWcLUPUTI4GckGMbtmmlDpaoFqvtU2fLNB3qFsa2o6cJZ5BtuHVnnRtAvAGY_u6ApThf6oQ1SFmhtp_BwIKQf6v_qfGeQPhpV1JvUFRicJvOtGnQNX000fOiw5e2DK6WBvdgNTK7ZN-E66WFco5EhGJGXvn7egTqd-BIYRSrzkG4QRdnYO--TiSwkEuTP8mMTZYthH6EbcSrAW_2589C8EJxnMJRQy5TmtGiSLZnGsIyq"/>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-container-padding lg:p-8 overflow-y-auto">
+<div class="mb-section-gap flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+<div>
+<h2 class="font-h1 text-h1 text-text-primary">Welcome back, Alex</h2>
+<p class="font-body text-body text-text-secondary mt-1">Here is what's happening with your job search today.</p>
+</div>
+<button class="px-4 py-2 bg-brand-primary text-white rounded-DEFAULT font-body text-body font-medium hover:bg-brand-hover transition-colors shadow-sm flex items-center gap-2 w-fit">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                    New Application
+                </button>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-element-gap mb-section-gap">
+<!-- Stat Card 1 -->
+<div class="bg-surface-card rounded-xl p-6 border border-border-soft shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-24 h-24 bg-primary-fixed-dim/20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110 duration-300"></div>
+<div class="flex items-start justify-between relative z-10">
+<div>
+<p class="font-body text-body text-text-secondary mb-1">Total Applications</p>
+<h3 class="font-display text-display text-text-primary">42</h3>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-brand-primary">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2 text-micro font-micro">
+<span class="text-match-high-text flex items-center bg-match-high-bg px-1.5 py-0.5 rounded-DEFAULT">
+<span class="material-symbols-outlined text-[14px]" data-icon="arrow_upward">arrow_upward</span>
+                            12%
+                        </span>
+<span class="text-text-secondary">vs last month</span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface-card rounded-xl p-6 border border-border-soft shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-24 h-24 bg-match-high-bg/30 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110 duration-300"></div>
+<div class="flex items-start justify-between relative z-10">
+<div>
+<p class="font-body text-body text-text-secondary mb-1">Interviews Scheduled</p>
+<h3 class="font-display text-display text-text-primary">5</h3>
+</div>
+<div class="w-10 h-10 rounded-lg bg-match-high-bg flex items-center justify-center text-match-high-text">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2 text-micro font-micro">
+<span class="text-text-secondary">Next: Tomorrow at 2:00 PM</span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface-card rounded-xl p-6 border border-border-soft shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-24 h-24 bg-secondary-fixed/30 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110 duration-300"></div>
+<div class="flex items-start justify-between relative z-10">
+<div>
+<p class="font-body text-body text-text-secondary mb-1">Profile Views</p>
+<h3 class="font-display text-display text-text-primary">128</h3>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2 text-micro font-micro">
+<span class="text-match-high-text flex items-center bg-match-high-bg px-1.5 py-0.5 rounded-DEFAULT">
+<span class="material-symbols-outlined text-[14px]" data-icon="arrow_upward">arrow_upward</span>
+                            8%
+                        </span>
+<span class="text-text-secondary">vs last week</span>
+</div>
+</div>
+</div>
+<!-- Recent Activity Table Section -->
+<div class="bg-surface-card border border-border-soft rounded-xl shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-border-soft flex justify-between items-center bg-surface-container-lowest">
+<h3 class="font-h2 text-h2 text-text-primary">Recent Activity</h3>
+<button class="text-brand-primary font-body text-body font-medium hover:text-brand-hover transition-colors flex items-center gap-1">
+                        View All
+                        <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-base text-text-secondary font-micro text-micro uppercase tracking-wider border-b border-border-soft">
+<th class="px-6 py-3 font-medium">Company</th>
+<th class="px-6 py-3 font-medium">Role</th>
+<th class="px-6 py-3 font-medium">Date Applied</th>
+<th class="px-6 py-3 font-medium">Status</th>
+<th class="px-6 py-3 font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body text-body text-text-primary divide-y divide-border-soft">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-base/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-DEFAULT bg-surface-container flex items-center justify-center border border-border-soft overflow-hidden">
+<img alt="Stripe Logo" class="w-5 h-5 object-contain" data-alt="A clean, minimalist vector logo of the company Stripe on a white background, representing modern fintech enterprise design." onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi3BkDuRmf7lfUHxpMl0rFaBI4Gci0jH_UAKzYhMgkmi8TV1nPmCorO2qEa3o3TsMQl0QiqcHdLm352qurzVtmkx48XEIBoZ0b0EqNuiYPsDETjeh_e97WMPvnfK-u63RoZLuyiyHk0lDy-EU_9VOJZ1YR12JgbxpuT1z9ANmF5Yhd4FOVjagAzGLU-3Yv75R71xNg0k4I4vxCX_eWWmOcvectiWnh7er0rrXLoP0GKGwft51zvt9FGOovjpIIuCqf9u3n33GmttVx"/>
+<div class="hidden w-full h-full bg-surface-container items-center justify-center text-text-secondary font-bold text-micro">S</div>
+</div>
+<span class="font-medium">Stripe</span>
+</div>
+</td>
+<td class="px-6 py-4">Senior Frontend Engineer</td>
+<td class="px-6 py-4 text-text-secondary">Oct 24, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-match-high-bg text-match-high-text font-micro text-micro font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-match-high-text mr-1.5"></span>
+                                        Shortlisted
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-text-secondary hover:text-brand-primary transition-colors opacity-0 group-hover:opacity-100 p-1">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-base/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-DEFAULT bg-surface-container flex items-center justify-center border border-border-soft overflow-hidden">
+<img alt="Airbnb Logo" class="w-5 h-5 object-contain" data-alt="A clean, minimalist vector logo of the company Airbnb on a white background, fitting within a modern corporate dashboard aesthetic." onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsJ1GN__PoK8inezAMRPfCOwSkX7haz1Z3UQasbp379s9-JlRe3bKPBh7CfW5e9n_nljOvR3D38UV0eTV8uL3fKjBvbJAkZ-9Ma5R-vGFtOvuYL-JrxdpUMXrX5wWpcxNWyD2NQbkzmwJOD9bxRe9wvjGEn3R-1iIyWbZxAEozIlZZNXTG0HqsbdtrtQmfEKAWhLCZdusNpBX2gtL5wOEtqubWxxA1AnTIrPgVL0zvGIMF6gSnEKF7rdW0HcaX8DiAwWcotOuLp5Rv"/>
+<div class="hidden w-full h-full bg-surface-container items-center justify-center text-text-secondary font-bold text-micro">A</div>
+</div>
+<span class="font-medium">Airbnb</span>
+</div>
+</td>
+<td class="px-6 py-4">Product Designer</td>
+<td class="px-6 py-4 text-text-secondary">Oct 22, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-match-med-bg text-match-med-text font-micro text-micro font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-match-med-text mr-1.5"></span>
+                                        Under Review
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-text-secondary hover:text-brand-primary transition-colors opacity-0 group-hover:opacity-100 p-1">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-base/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-DEFAULT bg-surface-container flex items-center justify-center border border-border-soft overflow-hidden">
+<img alt="Netflix Logo" class="w-5 h-5 object-contain" data-alt="A clean, minimalist vector logo of the company Netflix on a white background, suitable for an enterprise job tracking interface." onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1U5Dv4hEJ7u-snqaNRUOHCcCYhngv_OtuFCyLk1t5yrFvK2CKz_dQ7vLznRJ3vgJwwza-bzqPPo0no92woF5AZO-dkdDC0esu7J1_vXTqp2mPlh-B7zjVeFUL1Fr7wnRwE9QI9tE8iJvLIyz6-2FICWIMB_BszOqrzIi04QqX8TYL1keT8KkdvZC8TptN2K3vjqF23ds4Z28GSzQWocMkKSlsqNg0lr8uEF4xQ7rY-UtL2vBGdAoMn-9oD5esy66Zkxt5GviqFsS8"/>
+<div class="hidden w-full h-full bg-surface-container items-center justify-center text-text-secondary font-bold text-micro">N</div>
+</div>
+<span class="font-medium">Netflix</span>
+</div>
+</td>
+<td class="px-6 py-4">UX Researcher</td>
+<td class="px-6 py-4 text-text-secondary">Oct 18, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant font-micro text-micro font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-outline mr-1.5"></span>
+                                        Applied
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-text-secondary hover:text-brand-primary transition-colors opacity-0 group-hover:opacity-100 p-1">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-base/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-DEFAULT bg-surface-container flex items-center justify-center border border-border-soft overflow-hidden">
+<img alt="Spotify Logo" class="w-5 h-5 object-contain" data-alt="A clean, minimalist vector logo of the company Spotify on a white background, styled for a professional HR dashboard layout." onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8CgxCPN4KEB_vjc7oiLCtOlAOS7WsDcgwtwo1xqiij4w-D17gK_xnuHuxpBMmVDrUcdQCaF_4j1fhd4bRa11sn3Q2RWZdOoae1A5yQTxE6Uj6JkLvS8VvcP0HQlxghgpOIXbck78_jCA6Q3Ph4_RMaBDMe2lv2aX_vwA2p-3TTX01Th847YhzZFxwmvTJjDG8xlnB9FVzeVkvCKGZPT3sV4aKj-wEJX1nixWNibpMJ51Jn7DBI-DrTBzxXZuczxgruRq8cwcx6EEm"/>
+<div class="hidden w-full h-full bg-surface-container items-center justify-center text-text-secondary font-bold text-micro">S</div>
+</div>
+<span class="font-medium">Spotify</span>
+</div>
+</td>
+<td class="px-6 py-4">Full Stack Developer</td>
+<td class="px-6 py-4 text-text-secondary">Oct 15, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-match-low-bg text-match-low-text font-micro text-micro font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-match-low-text mr-1.5"></span>
+                                        Rejected
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-text-secondary hover:text-brand-primary transition-colors opacity-0 group-hover:opacity-100 p-1">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RecruitFlow - Hire Smarter. Interview Better.</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "border-soft": "#E2E8F0",
+                    "on-surface": "#1b1b24",
+                    "on-primary-fixed": "#0f0069",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "surface-base": "#F8FAFC",
+                    "on-tertiary-container": "#ffd2be",
+                    "match-high-bg": "#DCFCE7",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#505f76",
+                    "text-secondary": "#64748B",
+                    "tertiary-fixed": "#ffdbcc",
+                    "match-med-bg": "#FEF9C3",
+                    "on-secondary-container": "#54647a",
+                    "surface-tint": "#4d44e3",
+                    "brand-primary": "#4F46E5",
+                    "on-tertiary-fixed": "#351000",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "on-error": "#ffffff",
+                    "surface-container": "#f0ecf9",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "primary-container": "#4f46e5",
+                    "match-low-text": "#991B1B",
+                    "secondary-container": "#d0e1fb",
+                    "on-tertiary-fixed-variant": "#7b2f00",
+                    "on-secondary-fixed": "#0b1c30",
+                    "match-high-text": "#166534",
+                    "surface-container-highest": "#e4e1ee",
+                    "inverse-on-surface": "#f3effc",
+                    "tertiary-fixed-dim": "#ffb695",
+                    "match-low-bg": "#FEE2E2",
+                    "tertiary-container": "#a44100",
+                    "surface-container-high": "#eae6f4",
+                    "surface-card": "#FFFFFF",
+                    "secondary-fixed": "#d3e4fe",
+                    "surface-variant": "#e4e1ee",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#dad7ff",
+                    "background": "#fcf8ff",
+                    "brand-hover": "#4338CA",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "primary": "#3525cd",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f5f2ff",
+                    "surface": "#fcf8ff",
+                    "inverse-surface": "#302f39",
+                    "tertiary": "#7e3000",
+                    "outline-variant": "#c7c4d8",
+                    "surface-dim": "#dcd8e5",
+                    "primary-fixed": "#e2dfff",
+                    "text-primary": "#0F172A",
+                    "on-surface-variant": "#464555",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-primary": "#c3c0ff",
+                    "match-med-text": "#854D0E",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#fcf8ff",
+                    "on-background": "#1b1b24",
+                    "outline": "#777587"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "container-padding": "1.5rem",
+                    "element-gap": "1rem",
+                    "section-gap": "2rem",
+                    "sidebar-width": "16rem"
+            },
+            "fontFamily": {
+                    "h1": [
+                            "Inter"
+                    ],
+                    "micro": [
+                            "Inter"
+                    ],
+                    "h2": [
+                            "Inter"
+                    ],
+                    "display": [
+                            "Inter"
+                    ],
+                    "body": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "h1": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.025em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "micro": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "h2": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "display": [
+                            "36px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.025em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-text-primary font-body text-body antialiased selection:bg-brand-primary selection:text-on-primary">
+<!-- TopNavBar Component -->
+<header class="fixed w-full top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm border-b border-slate-200 dark:border-slate-800 transition-all duration-200 ease-in-out">
+<div class="flex justify-between items-center px-8 h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-xl font-bold tracking-tight text-slate-900 dark:text-white" href="#">RecruitFlow</a>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-['Inter'] text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" href="#">Solutions</a>
+<a class="font-['Inter'] text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" href="#">Pricing</a>
+<a class="font-['Inter'] text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" href="#">Enterprise</a>
+<a class="font-['Inter'] text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-['Inter'] text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-4 py-2">
+                    Login
+                </button>
+<button class="font-['Inter'] text-sm font-medium bg-brand-primary text-on-primary rounded-lg px-4 py-2 hover:bg-brand-hover transition-colors shadow-sm">
+                    Sign Up
+                </button>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-section-gap flex flex-col gap-12">
+<!-- Hero Section -->
+<section class="max-w-7xl mx-auto px-container-padding w-full py-12 md:py-20 flex flex-col items-center text-center">
+<span class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full text-brand-primary font-micro text-micro mb-6 border border-primary-fixed">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+                Introducing AI-Powered Candidate Matching
+            </span>
+<h1 class="font-display text-display md:text-[56px] md:leading-[64px] text-text-primary max-w-4xl tracking-tight mb-6">
+                Hire Smarter. <br class="hidden md:block"/> Interview Better.
+            </h1>
+<p class="font-h2 text-h2 text-text-secondary max-w-2xl mb-10">
+                Transform your recruitment pipeline with enterprise-grade AI. Automate resume parsing, conduct intelligent mock interviews, and identify top talent faster than ever before.
+            </p>
+<div class="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+<button class="w-full sm:w-auto px-6 py-3 bg-brand-primary text-on-primary rounded-lg font-body text-body font-medium hover:bg-brand-hover transition-colors shadow-sm flex items-center justify-center gap-2">
+                    I am looking to hire
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<button class="w-full sm:w-auto px-6 py-3 bg-surface-card border border-border-soft text-text-primary rounded-lg font-body text-body font-medium hover:bg-surface-base transition-colors shadow-sm flex items-center justify-center gap-2">
+                    I am looking for a job
+                </button>
+</div>
+<div class="mt-16 w-full max-w-5xl rounded-xl border border-border-soft shadow-xl overflow-hidden bg-surface-card h-[400px] md:h-[600px] relative">
+<img alt="Dashboard Preview" class="w-full h-full object-cover object-top opacity-90" data-alt="A clean, modern SaaS application dashboard displayed on a high-resolution screen, angled slightly in a bright, well-lit office environment. The UI features crisp geometric data visualizations, a sophisticated palette of crisp whites, subtle slate grays, and vibrant indigo accents. The mood is professional, efficient, and technologically advanced, perfectly embodying a modern enterprise HR platform in light mode." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwvRx-dW76f6u7mwP31RL9IWsn-ClSlQp097Dd8n68JWnBEWoVpoiaCsqzb6icFxcLJKWPo9J4tIrhEdGVANE7C3VkUCgAqM20e1BJUnNyLFR_XTvon_Kor9IAQawckCbLnVtGQjK--aEYzOeLm-xeWp_E0E4p8q3tTb60-TwHwfe6-m1SWcvb3Mzqr6_VLNV3MbEb4VIqFNG3bs-7pxzaLbfVF0PiPt_Ps4CxcaKjZ0Pu5Nyz66dxZe7b-kX1hVjZSP5jHfRXCxEY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="max-w-7xl mx-auto px-container-padding w-full py-section-gap">
+<div class="text-center mb-12">
+<h2 class="font-h1 text-h1 text-text-primary mb-4">Intelligent workflows for modern HR teams</h2>
+<p class="font-body text-body text-text-secondary max-w-2xl mx-auto">Everything you need to scale your hiring process without compromising on quality.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-element-gap">
+<!-- Feature 1 -->
+<div class="bg-surface-card border border-border-soft rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full relative overflow-hidden group">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center text-brand-primary mb-6">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">document_scanner</span>
+</div>
+<h3 class="font-h2 text-h2 text-text-primary mb-3">Resume Parsing</h3>
+<p class="font-body text-body text-text-secondary flex-grow">
+                        Instantly extract key skills, experience, and education from thousands of applications using our advanced AI models. Standardize data effortlessly.
+                    </p>
+</div>
+<!-- Feature 2 -->
+<div class="bg-surface-card border border-border-soft rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full relative overflow-hidden group">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center text-brand-primary mb-6">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">record_voice_over</span>
+</div>
+<h3 class="font-h2 text-h2 text-text-primary mb-3">Mock Interviews</h3>
+<p class="font-body text-body text-text-secondary flex-grow">
+                        Provide candidates with AI-driven preliminary interviews. Automatically assess communication skills, technical knowledge, and cultural fit before human intervention.
+                    </p>
+</div>
+<!-- Feature 3 -->
+<div class="bg-surface-card border border-border-soft rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full relative overflow-hidden group">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center text-brand-primary mb-6">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">schema</span>
+</div>
+<h3 class="font-h2 text-h2 text-text-primary mb-3">Applicant Pipeline</h3>
+<p class="font-body text-body text-text-secondary flex-grow">
+                        Visualize your entire hiring funnel in a single, intuitive Kanban board. Automate stage progressions and trigger customized communications instantly.
+                    </p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-base border-t border-border-soft pt-16 pb-8">
+<div class="max-w-7xl mx-auto px-container-padding w-full">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+<div class="col-span-1">
+<a class="text-xl font-bold tracking-tight text-text-primary mb-4 block" href="#">RecruitFlow</a>
+<p class="font-body text-body text-text-secondary mb-6">
+                        Empowering enterprise teams to build the future of work through intelligent hiring.
+                    </p>
+<div class="flex items-center gap-4 text-text-secondary">
+<a class="hover:text-brand-primary transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">public</span></a>
+<a class="hover:text-brand-primary transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">mail</span></a>
+</div>
+</div>
+<div class="col-span-1">
+<h4 class="font-h2 text-h2 text-text-primary mb-4 text-[16px]">Product</h4>
+<ul class="flex flex-col gap-3">
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Features</a></li>
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Pricing</a></li>
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Enterprise</a></li>
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Security</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<h4 class="font-h2 text-h2 text-text-primary mb-4 text-[16px]">Resources</h4>
+<ul class="flex flex-col gap-3">
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Documentation</a></li>
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Blog</a></li>
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Help Center</a></li>
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">API Reference</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<h4 class="font-h2 text-h2 text-text-primary mb-4 text-[16px]">Company</h4>
+<ul class="flex flex-col gap-3">
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">About Us</a></li>
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Careers</a></li>
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="font-body text-body text-text-secondary hover:text-brand-primary transition-colors" href="#">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-border-soft flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-body text-body text-text-secondary text-sm">
+                    © 2024 RecruitFlow Inc. All rights reserved.
+                </p>
+<div class="flex items-center gap-2 font-body text-body text-text-secondary text-sm">
+<span class="w-2 h-2 rounded-full bg-match-high-bg border border-match-high-text"></span>
+                    Systems Operational
+                </div>
+</div>
+</div>
+</footer>
+</body></html>
