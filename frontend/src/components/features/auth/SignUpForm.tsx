@@ -5,17 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authData } from "@/data/mockData";
-import { User, Mail, Lock } from "lucide-react";
+import { User, Mail, Lock, Briefcase, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+
+type Role = "SEEKER" | "EMPLOYER";
 
 export function SignUpForm() {
   const data = authData.signup;
   const router = useRouter();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<Role>("SEEKER");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,7 +34,7 @@ export function SignUpForm() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, role: selectedRole }),
       });
 
       if (!res.ok) {
@@ -48,7 +51,8 @@ export function SignUpForm() {
       if (result?.error) {
         setError("Error signing in after registration");
       } else {
-        router.push("/seeker/dashboard");
+        // Redirect based on role chosen at sign-up
+        router.push(selectedRole === "EMPLOYER" ? "/employer/dashboard" : "/seeker/dashboard");
         router.refresh();
       }
     } catch (err: any) {
@@ -59,7 +63,7 @@ export function SignUpForm() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 100 }}
@@ -76,6 +80,37 @@ export function SignUpForm() {
       </div>
 
       <div className="bg-card py-8 px-4 border-2 border-border sm:px-10 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
+        {/* Role Selector */}
+        <div className="mb-6">
+          <p className="uppercase tracking-widest text-xs font-bold text-foreground mb-3">I am a</p>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setSelectedRole("SEEKER")}
+              className={`flex flex-col items-center gap-2 p-4 border-2 transition-all font-bold text-sm uppercase tracking-wider ${
+                selectedRole === "SEEKER"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border text-muted-foreground hover:border-primary/50 hover:bg-primary/5"
+              }`}
+            >
+              <Search className="w-5 h-5" />
+              <span>Job Seeker</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedRole("EMPLOYER")}
+              className={`flex flex-col items-center gap-2 p-4 border-2 transition-all font-bold text-sm uppercase tracking-wider ${
+                selectedRole === "EMPLOYER"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border text-muted-foreground hover:border-primary/50 hover:bg-primary/5"
+              }`}
+            >
+              <Briefcase className="w-5 h-5" />
+              <span>Employer</span>
+            </button>
+          </div>
+        </div>
+
         {error && (
           <div className="mb-4 p-3 border-2 border-destructive bg-destructive/10 text-destructive font-bold text-sm uppercase tracking-wider">
             {error}
@@ -154,12 +189,14 @@ export function SignUpForm() {
 
           <div>
             <Button type="submit" disabled={isLoading} className="w-full uppercase tracking-widest font-bold rounded-none text-sm border-2 border-transparent hover:border-foreground transition-all">
-              {isLoading ? "Creating Account..." : data.submitText}
+              {isLoading
+                ? "Creating Account..."
+                : `Sign Up as ${selectedRole === "EMPLOYER" ? "Employer" : "Job Seeker"}`}
             </Button>
           </div>
         </form>
       </div>
-      
+
       <p className="mt-8 text-center text-sm text-muted-foreground font-medium">
         {data.footerText}{" "}
         <Link href="/login" className="text-primary hover:text-primary/80 transition-colors uppercase tracking-widest text-xs font-bold border-b border-transparent hover:border-primary">

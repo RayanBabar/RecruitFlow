@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { authData } from "@/data/mockData";
 import { Mail, Lock } from "lucide-react";
 import { motion } from "framer-motion";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -36,7 +36,15 @@ export function LoginForm() {
       if (result?.error) {
         setError("Invalid email or password");
       } else {
-        router.push("/seeker/dashboard"); // Defaulting redirect, middleware will handle proper routing later
+        // Fetch the session to get the user's role and redirect accordingly
+        const session = await getSession();
+        const role = (session?.user as any)?.role;
+
+        if (role === "EMPLOYER") {
+          router.push("/employer/dashboard");
+        } else {
+          router.push("/seeker/dashboard");
+        }
         router.refresh();
       }
     } catch (err) {
@@ -47,7 +55,7 @@ export function LoginForm() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 100 }}
@@ -130,7 +138,7 @@ export function LoginForm() {
           </div>
         </form>
       </div>
-      
+
       <p className="mt-8 text-center text-sm text-muted-foreground font-medium">
         {data.footerText}{" "}
         <Link href="/signup" className="text-primary hover:text-primary/80 transition-colors uppercase tracking-widest text-xs font-bold border-b border-transparent hover:border-primary">

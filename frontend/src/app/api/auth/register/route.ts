@@ -4,10 +4,13 @@ import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+type Role = "SEEKER" | "EMPLOYER";
+const VALID_ROLES: Role[] = ["SEEKER", "EMPLOYER"];
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, password } = body;
+    const { name, email, password, role } = body;
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -15,6 +18,9 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    // Validate role — default to SEEKER if not provided or invalid
+    const userRole: Role = VALID_ROLES.includes(role) ? role : "SEEKER";
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -29,12 +35,12 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        // Default role is SEEKER based on Prisma schema. We can allow selecting role later.
+        role: userRole,
       },
     });
 
