@@ -25,7 +25,7 @@ export async function GET() {
     });
 
     const totalApplications = jobs.reduce((sum, j) => sum + j._count.applications, 0);
-    const totalViews = jobs.length * 120; // Simulated — no view tracking yet
+    const totalViews = jobs.reduce((sum, j) => sum + j.views, 0);
 
     // Average time to hire (days since posting for OFFER applications)
     const offerApps = jobs.flatMap((j) =>
@@ -54,7 +54,7 @@ export async function GET() {
           id: j.id,
           title: j.title,
           applicants: j._count.applications,
-          views: Math.floor(Math.random() * 3000) + 500, // placeholder until view tracking exists
+          views: j.views,
           avgMatch,
           status: j.status,
         };

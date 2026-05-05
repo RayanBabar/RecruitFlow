@@ -31,6 +31,7 @@ export default function FindJobsPage() {
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [isCheckingScore, setIsCheckingScore] = useState<string | null>(null);
   const [scores, setScores] = useState<{ [key: string]: { match_score: number; feedback: string } }>({});
+  const [viewedJobs, setViewedJobs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetch("/api/jobs")
@@ -109,6 +110,22 @@ export default function FindJobsPage() {
       alert("An error occurred while checking your score.");
     } finally {
       setIsCheckingScore(null);
+    }
+  };
+
+  const handleToggleDetails = async (jobId: string) => {
+    const isExpanding = expandedJobId !== jobId;
+    setExpandedJobId(isExpanding ? jobId : null);
+
+    // Track view if expanding and we haven't tracked this job in this session
+    if (isExpanding && !viewedJobs.has(jobId)) {
+      try {
+        await fetch(`/api/jobs/${jobId}/view`, { method: "POST" });
+        setViewedJobs((prev) => new Set([...prev, jobId]));
+      } catch (e) {
+        // Silently fail view tracking to not interrupt UX
+        console.error("Failed to track view", e);
+      }
     }
   };
 
@@ -216,7 +233,7 @@ export default function FindJobsPage() {
                             </div>
                           </div>
                           <button
-                            onClick={() => setExpandedJobId(expandedJobId === job.id ? null : job.id)}
+                            onClick={() => handleToggleDetails(job.id)}
                             className="font-bold text-xs uppercase tracking-widest px-5 py-2 border-2 border-border text-foreground hover:bg-secondary transition-all"
                           >
                             {expandedJobId === job.id ? "Hide Details" : "View Details"}
