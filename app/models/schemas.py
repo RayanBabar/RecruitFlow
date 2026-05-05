@@ -18,3 +18,8 @@ class ParsedResumeData(BaseModel):
     experience: List[ExperienceInfo] = Field(description="Work experience")
     match_score: float = Field(description="Calculated match score from 0.0 to 100.0 based on the job description")
     feedback: str = Field(description="Justification for the match score and areas for improvement")
+    resume_text: str = Field(default="", description="The raw extracted text from the resume")
+
+class ScoreProfileRequest(BaseModel):
+    resume_text: str = Field(description="The raw extracted text from the seeker's profile or resume")
+    job_description: str = Field(description="The job description to match against")

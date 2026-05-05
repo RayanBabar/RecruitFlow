@@ -1,5 +1,5 @@
 from fastapi import APIRouter, File, Form, UploadFile, HTTPException
-from app.models.schemas import ParsedResumeData
+from app.models.schemas import ParsedResumeData, ScoreProfileRequest
 from app.services.pdf_service import extract_text_from_pdf
 from app.services.llm_service import analyze_resume
 import logging
@@ -33,6 +33,21 @@ async def parse_resume_endpoint(
     # 2. Process with Local LLM (Gemma 4)
     try:
         parsed_data = analyze_resume(resume_text, job_description)
+        parsed_data.resume_text = resume_text
+        return parsed_data
+    except ValueError as ve:
+        raise HTTPException(status_code=502, detail=str(ve))
+    except RuntimeError as re:
+        raise HTTPException(status_code=503, detail=str(re))
+    except Exception as e:
+        logger.error(f"LLM analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal error during AI analysis.")
+
+@router.post("/score-profile", response_model=ParsedResumeData)
+async def score_profile_endpoint(request: ScoreProfileRequest):
+    try:
+        parsed_data = analyze_resume(request.resume_text, request.job_description)
+        parsed_data.resume_text = request.resume_text
         return parsed_data
     except ValueError as ve:
         raise HTTPException(status_code=502, detail=str(ve))

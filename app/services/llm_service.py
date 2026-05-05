@@ -73,14 +73,14 @@ def _analyze_with_modal(resume_text: str, job_description: str) -> ParsedResumeD
     base_url = MODAL_ENDPOINT_URL.rstrip("/")
 
     try:
-        with httpx.Client(timeout=90.0) as client:
+        with httpx.Client(timeout=300.0) as client:
             response = client.post(
                 f"{base_url}/v1/chat/completions",
                 json=payload,
             )
             response.raise_for_status()
     except httpx.TimeoutException:
-        raise RuntimeError("Modal vLLM endpoint timed out after 90s.")
+        raise RuntimeError("Modal vLLM endpoint timed out after 300s.")
     except httpx.HTTPStatusError as e:
         raise RuntimeError(
             f"Modal vLLM returned HTTP {e.response.status_code}: {e.response.text[:200]}"
@@ -150,15 +150,10 @@ def analyze_resume(resume_text: str, job_description: str) -> ParsedResumeData:
     Fallback: Local Ollama (batiai/gemma4-e2b:q4)
     """
     if USE_MODAL and MODAL_ENDPOINT_URL:
-        try:
-            logger.info("Analyzing resume via Modal vLLM GPU endpoint...")
-            result = _analyze_with_modal(resume_text, job_description)
-            logger.info("Modal vLLM analysis successful.")
-            return result
-        except RuntimeError as e:
-            logger.warning(f"Modal unavailable, falling back to local Ollama: {e}")
-        except ValueError as e:
-            logger.warning(f"Modal response invalid, falling back to local Ollama: {e}")
+        logger.info("Analyzing resume via Modal vLLM GPU endpoint...")
+        result = _analyze_with_modal(resume_text, job_description)
+        logger.info("Modal vLLM analysis successful.")
+        return result
 
     # Fallback to local Ollama
     logger.info(f"Analyzing resume via local Ollama model '{LOCAL_MODEL_NAME}'...")
