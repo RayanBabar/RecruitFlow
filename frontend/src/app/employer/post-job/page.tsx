@@ -18,6 +18,7 @@ export default function PostJobPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [companyName, setCompanyName] = useState("");
   const [verificationStatus, setVerificationStatus] = useState<"PENDING" | "APPROVED" | "REJECTED" | null>(null);
   const [adminNote, setAdminNote] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -36,6 +37,9 @@ export default function PostJobPage() {
       .then((p) => {
         setVerificationStatus(p?.verificationStatus ?? "PENDING");
         setAdminNote(p?.adminNote ?? null);
+        if (p?.companyName) {
+          setCompanyName(p.companyName);
+        }
       })
       .catch(() => setVerificationStatus("PENDING"))
       .finally(() => setProfileLoading(false));
@@ -214,7 +218,13 @@ export default function PostJobPage() {
             </div>
             <div className="space-y-2">
               <label className="font-bold text-xs text-foreground uppercase tracking-widest block">Company *</label>
-              <Input ref={companyRef} placeholder="e.g. Acme Corp" className="h-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-colors font-bold text-sm" />
+              <Input 
+                ref={companyRef} 
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="e.g. Acme Corp" 
+                className="h-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-colors font-bold text-sm" 
+              />
             </div>
             <div className="space-y-2">
               <label className="font-bold text-xs text-foreground uppercase tracking-widest block">Location *</label>
