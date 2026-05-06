@@ -1,12 +1,12 @@
 "use client";
 
 import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout";
-import { PhoneOff, Mic, Paperclip, Send, Sparkles, Wifi, WifiOff, AlertCircle, Loader2 } from "lucide-react";
+import { PhoneOff, Mic, Send, Sparkles, Wifi, WifiOff, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
-import { useInterviewWebSocket } from "@/lib/hooks/useInterviewWebSocket";
+import { useInterviewWebSocket, InterviewContext } from "@/lib/hooks/useInterviewWebSocket";
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -89,19 +89,19 @@ function JobSelectionView() {
 function InterviewContent() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const userId = (session?.user as any)?.id ?? "guest";
+  const userId = session?.user?.id ?? "guest";
   
   // Use a unique session ID for each interview attempt so LangGraph memory doesn't carry over
   const [sessionId] = useState(() => `${userId}-interview-${Date.now()}`);
   const jobId = searchParams.get("jobId");
 
-  const [jobData, setJobData] = useState<any>(null);
-  const [profileData, setProfileData] = useState<any>(null);
+  const [jobData, setJobData] = useState<InterviewContext['jobData'] | undefined>(undefined);
+  const [profileData, setProfileData] = useState<InterviewContext['profileData'] | undefined>(undefined);
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
     if (jobId === "general") {
-      setIsInitializing(false);
+      Promise.resolve().then(() => setIsInitializing(false));
       return;
     }
     
