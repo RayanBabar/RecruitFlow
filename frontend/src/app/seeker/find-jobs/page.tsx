@@ -1,11 +1,10 @@
 "use client";
 
 import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout";
-import { DollarSign, Clock, Bookmark, Flame, ThumbsUp, SlidersHorizontal, Loader2, Sparkles } from "lucide-react";
+import { DollarSign, Clock, Bookmark, Flame, SlidersHorizontal, Loader2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { ResumeAPI } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
 
 interface Job {
@@ -23,7 +22,7 @@ interface Job {
 }
 
 export default function FindJobsPage() {
-  const { data: session } = useSession();
+  useSession();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [applyingId, setApplyingId] = useState<string | null>(null);
@@ -31,8 +30,25 @@ export default function FindJobsPage() {
   const [sortBy, setSortBy] = useState("Newest");
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [isCheckingScore, setIsCheckingScore] = useState<string | null>(null);
-  const [scores, setScores] = useState<{ [key: string]: { match_score: number; feedback: string; requirement_checks?: any[] } }>({});
+  interface RequirementCheck {
+    requirement: string;
+    meets_requirement: boolean;
+    reason?: string;
+  }
+
+  interface Score {
+    match_score: number;
+    feedback: string;
+    requirement_checks?: RequirementCheck[];
+  }
+
+  const [scores, setScores] = useState<{ [key: string]: Score }>({});
   const [viewedJobs, setViewedJobs] = useState<Set<string>>(new Set());
+  const [now, setNow] = useState<number>(0);
+
+  useEffect(() => {
+    Promise.resolve().then(() => setNow(Date.now()));
+  }, []);
 
   useEffect(() => {
     fetch("/api/jobs")
@@ -42,8 +58,9 @@ export default function FindJobsPage() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const timeAgo = (dateStr: string) => {
-    const ms = Date.now() - new Date(dateStr).getTime();
+  const timeAgo = (dateStr: string, current: number) => {
+    if (!current) return "...";
+    const ms = current - new Date(dateStr).getTime();
     const hours = Math.floor(ms / 3600000);
     if (hours < 24) return `${hours}h ago`;
     return `${Math.floor(hours / 24)}d ago`;
@@ -231,7 +248,7 @@ export default function FindJobsPage() {
                               </div>
                             )}
                             <div className="flex items-center text-muted-foreground font-bold text-xs uppercase tracking-widest gap-1.5">
-                              <Clock className="w-4 h-4" />{timeAgo(job.createdAt)}
+                              <Clock className="w-4 h-4" />{timeAgo(job.createdAt, now)}
                             </div>
                           </div>
                           <button
@@ -255,12 +272,12 @@ export default function FindJobsPage() {
                                 <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none">
                                   <ReactMarkdown
                                     components={{
-                                      strong: ({node, ...props}) => <span className="font-bold text-foreground" {...props} />,
-                                      p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
-                                      ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
-                                      ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
-                                      li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
-                                      a: ({node, ...props}) => <a className="text-primary hover:underline font-bold" target="_blank" rel="noopener noreferrer" {...props} />
+                                      strong: ({node: _node, ...props}) => <span className="font-bold text-foreground" {...props} />,
+                                      p: ({node: _node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
+                                      ul: ({node: _node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                                      ol: ({node: _node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                                      li: ({node: _node, ...props}) => <li className="leading-relaxed" {...props} />,
+                                      a: ({node: _node, ...props}) => <a className="text-primary hover:underline font-bold" target="_blank" rel="noopener noreferrer" {...props} />
                                     }}
                                   >
                                     {job.description}
@@ -275,11 +292,11 @@ export default function FindJobsPage() {
                                   <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none">
                                     <ReactMarkdown
                                       components={{
-                                        strong: ({node, ...props}) => <span className="font-bold text-foreground" {...props} />,
-                                        p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
-                                        ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
-                                        ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
-                                        li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
+                                        strong: ({node: _node, ...props}) => <span className="font-bold text-foreground" {...props} />,
+                                        p: ({node: _node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
+                                        ul: ({node: _node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                                        ol: ({node: _node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                                        li: ({node: _node, ...props}) => <li className="leading-relaxed" {...props} />,
                                       }}
                                     >
                                       {job.requirements}
@@ -304,11 +321,11 @@ export default function FindJobsPage() {
                                       <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none">
                                         <ReactMarkdown
                                           components={{
-                                            strong: ({node, ...props}) => <span className="font-bold text-foreground" {...props} />,
-                                            p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
-                                            ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
-                                            ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
-                                            li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
+                                            strong: ({node: _node, ...props}) => <span className="font-bold text-foreground" {...props} />,
+                                            p: ({node: _node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
+                                            ul: ({node: _node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                                            ol: ({node: _node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                                            li: ({node: _node, ...props}) => <li className="leading-relaxed" {...props} />,
                                           }}
                                         >
                                           {scores[job.id].feedback}

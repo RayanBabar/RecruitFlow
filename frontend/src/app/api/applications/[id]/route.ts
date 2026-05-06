@@ -39,7 +39,7 @@ export async function GET(req: Request, context: RouteContext) {
 
     if (!application) return NextResponse.json({ message: "Not found" }, { status: 404 });
     return NextResponse.json(application);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }
@@ -65,7 +65,7 @@ export async function PATCH(req: Request, context: RouteContext) {
     });
 
     return NextResponse.json(application);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

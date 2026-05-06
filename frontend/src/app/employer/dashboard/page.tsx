@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Download, Briefcase, Users, Timer,
   TrendingUp, Filter, ArrowRight, PlusCircle,
-  Clock, XCircle, CheckCircle2, AlertTriangle
+  Clock, XCircle, AlertTriangle
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";

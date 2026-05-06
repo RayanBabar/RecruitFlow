@@ -2,7 +2,7 @@
 
 import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout";
 import {
-  ArrowLeft, X, Calendar, CheckCircle, Sparkles,
+  ArrowLeft, X, CheckCircle, Sparkles,
   CheckCircle2, XCircle, FileText, Download, Loader2, MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,21 @@ import { motion } from "framer-motion";
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+
+interface ExperienceEntry {
+  role?: string;
+  title?: string;
+  company?: string;
+  duration?: string;
+  period?: string;
+  description?: string;
+}
+
+interface AIRequirementCheck {
+  requirement: string;
+  meets_requirement: boolean;
+  reason?: string;
+}
 
 interface Application {
   id: string;
@@ -88,7 +103,7 @@ export default function CandidateAnalysisPage({ params }: { params: Promise<{ id
   const skills: string[] = parseSkills(application?.seeker.profile?.skills);
   const allSkillsText = skills.join(" ").toLowerCase();
 
-  const experience: any[] = (() => {
+  const experience: ExperienceEntry[] = (() => {
     try {
       return application?.seeker.profile?.experience
         ? JSON.parse(application.seeker.profile.experience)
@@ -96,7 +111,7 @@ export default function CandidateAnalysisPage({ params }: { params: Promise<{ id
     } catch { return []; }
   })();
 
-  const aiRequirements: any[] = (() => {
+  const aiRequirements: AIRequirementCheck[] = (() => {
     try {
       return application?.aiRequirementChecks
         ? JSON.parse(application.aiRequirementChecks)
@@ -247,11 +262,11 @@ export default function CandidateAnalysisPage({ params }: { params: Promise<{ id
                 <div className="prose prose-sm dark:prose-invert max-w-none text-foreground font-medium">
                   <ReactMarkdown
                     components={{
-                      strong: ({node, ...props}) => <span className="font-bold text-foreground" {...props} />,
-                      p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
-                      ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
-                      ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
-                      li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
+                      strong: ({node: _node, ...props}) => <span className="font-bold text-foreground" {...props} />,
+                      p: ({node: _node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
+                      ul: ({node: _node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                      ol: ({node: _node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                      li: ({node: _node, ...props}) => <li className="leading-relaxed" {...props} />,
                     }}
                   >
                     {application.aiFeedback}
@@ -349,7 +364,7 @@ export default function CandidateAnalysisPage({ params }: { params: Promise<{ id
                   {experience.length > 0 && (
                     <div>
                       <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-l-4 border-black pl-3">Experience</h2>
-                      {experience.map((exp: any, i: number) => (
+                      {experience.map((exp: ExperienceEntry, i: number) => (
                         <div key={i} className="mb-6">
                           <div className="flex justify-between items-baseline mb-1">
                             <h3 className="font-black uppercase tracking-wide">{exp.role ?? exp.title}</h3>
@@ -366,7 +381,7 @@ export default function CandidateAnalysisPage({ params }: { params: Promise<{ id
                 <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
                   <FileText className="w-16 h-16 text-muted-foreground" />
                   <p className="font-bold text-muted-foreground uppercase tracking-widest text-sm max-w-xs">
-                    This candidate hasn't uploaded a resume or their profile data is unavailable.
+                    This candidate hasn&apos;t uploaded a resume or their profile data is unavailable.
                   </p>
                 </div>
               )}

@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     // Resolve "me" to the actual session user ID
     if (employerId === "me") {
       const session = await getServerSession(authOptions);
-      employerId = (session?.user as any)?.id ?? null;
+      employerId = session?.user?.id ?? null;
     }
 
     const where = employerId
@@ -41,13 +41,13 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== "EMPLOYER") {
+    if (!session?.user || session.user.role !== "EMPLOYER") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     // Enforce employer verification
     const employer = await prisma.user.findUnique({
-      where: { id: (session.user as any).id },
+      where: { id: session.user.id },
       include: { employerProfile: true },
     });
 
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
         salary: salary || null,
         description,
         requirements: requirements || null,
-        employerId: (session.user as any).id,
+        employerId: session.user.id,
         status: "OPEN",
       },
     });

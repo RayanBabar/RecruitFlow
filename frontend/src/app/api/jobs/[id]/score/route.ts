@@ -11,11 +11,11 @@ const API_URL = process.env.API_URL || "http://localhost:8000/api/v1";
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== "SEEKER") {
+    if (!session?.user || session.user.role !== "SEEKER") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const { id: jobId } = await params;
 
     // Fetch the user's profile to get the resume text
@@ -59,8 +59,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const parsedData = response.data;
 
     return NextResponse.json(parsedData, { status: 200 });
-  } catch (error: any) {
-    console.error("POST /api/jobs/[id]/score error:", error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("POST /api/jobs/[id]/score error:", error.response?.data || error.message);
+    } else {
+      console.error("POST /api/jobs/[id]/score error:", error);
+    }
     return NextResponse.json({ message: "Internal server error during AI scoring" }, { status: 500 });
   }
 }

@@ -8,11 +8,11 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== "EMPLOYER") {
+    if (!session?.user || session.user.role !== "EMPLOYER") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const employerId = (session.user as any).id;
+    const employerId = session.user.id;
 
     const [jobs, applications] = await Promise.all([
       prisma.job.findMany({

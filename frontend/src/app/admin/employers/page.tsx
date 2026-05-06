@@ -53,7 +53,9 @@ export default function AdminEmployersPage() {
   }, []);
 
   useEffect(() => {
-    fetchEmployers();
+    Promise.resolve().then(() => {
+      fetchEmployers();
+    });
   }, [fetchEmployers]);
 
   const handleAction = async (userId: string, status: "APPROVED" | "REJECTED", note?: string) => {
@@ -110,7 +112,7 @@ export default function AdminEmployersPage() {
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-8">
         {/* Stats Row */}
         <div className="grid grid-cols-3 gap-4">
-          {TAB_CONFIG.map(({ id, label, icon: Icon, accent }) => (
+          {TAB_CONFIG.map(({ id, label, icon: Icon }) => (
             <div key={id} className="bg-card border-2 border-border p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
               <div className="flex items-center gap-2 mb-2">
                 <Icon className="w-4 h-4 text-muted-foreground" />

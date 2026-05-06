@@ -11,7 +11,7 @@ export async function GET() {
     const session = await getServerSession(authOptions);
     if (!session?.user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -27,7 +27,7 @@ export async function GET() {
       role: user.role,
       profile: user.profile,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }
@@ -38,9 +38,9 @@ export async function PUT(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     const body = await req.json();
-    const { skills, experience, resumeUrl, resumeText, parsedData } = body;
+    const { skills, experience, resumeUrl, resumeText } = body;
 
     const profile = await prisma.profile.upsert({
       where: { userId },

@@ -2,7 +2,7 @@
 
 import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout";
 import { postJobData } from "@/data/mockData";
-import { Sparkles, Bold, Italic, List, Link2, X, CheckCircle, Clock, XCircle, AlertTriangle } from "lucide-react";
+import { Sparkles, Bold, Italic, List, Link2, X, CheckCircle, Clock, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
@@ -10,7 +10,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function PostJobPage() {
-  const { departments, jobTypes, workModes, exampleSkills } = postJobData;
+  const { jobTypes, workModes, exampleSkills } = postJobData;
   const router = useRouter();
   const [selectedWorkMode, setSelectedWorkMode] = useState("Remote");
   const [selectedJobType, setSelectedJobType] = useState("Full-time");
@@ -105,8 +105,9 @@ export default function PostJobPage() {
 
       setSuccess(true);
       setTimeout(() => router.push("/employer/dashboard"), 1500);
-    } catch (err: any) {
-      setError(err.message || "An error occurred");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "An error occurred";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

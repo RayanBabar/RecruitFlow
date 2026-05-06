@@ -2,13 +2,12 @@
 
 import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout";
 import {
-  ChevronRight, Edit2, TrendingUp, Sparkles, Filter, ListFilter,
-  Search, ArrowRight, ArrowLeft, Loader2, Users, CheckCircle2, MessageSquare, X
+  ChevronRight, TrendingUp, Sparkles,
+  Search, ArrowRight, Loader2, Users, CheckCircle2, MessageSquare, X
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -54,7 +53,7 @@ const MATCH_BAR_COLOR = (score: number) => {
   return "bg-rose-400";
 };
 
-export default function PipelinePage() {
+function PipelineContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const jobId = searchParams.get("jobId");
@@ -97,7 +96,9 @@ export default function PipelinePage() {
     }
   }, [jobId]);
 
-  useEffect(() => { loadApplications(); }, [loadApplications]);
+  useEffect(() => {
+    Promise.resolve().then(() => loadApplications());
+  }, [loadApplications]);
 
   const updateStatus = async (applicationId: string, newStatus: string) => {
     setUpdatingId(applicationId);
@@ -387,5 +388,19 @@ export default function PipelinePage() {
         </div>
       </motion.div>
     </DashboardLayout>
+  );
+}
+
+export default function PipelinePage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout role="employer">
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    }>
+      <PipelineContent />
+    </Suspense>
   );
 }

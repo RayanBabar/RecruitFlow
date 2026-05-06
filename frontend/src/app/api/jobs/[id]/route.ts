@@ -21,7 +21,7 @@ export async function GET(req: Request, context: RouteContext) {
 
     if (!job) return NextResponse.json({ message: "Job not found" }, { status: 404 });
     return NextResponse.json(job);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }
@@ -31,7 +31,7 @@ export async function PATCH(req: Request, context: RouteContext) {
   try {
     const { id } = await context.params;
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== "EMPLOYER") {
+    if (!session?.user || session.user.role !== "EMPLOYER") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
@@ -39,13 +39,13 @@ export async function PATCH(req: Request, context: RouteContext) {
     const job = await prisma.job.findUnique({ where: { id } });
 
     if (!job) return NextResponse.json({ message: "Job not found" }, { status: 404 });
-    if (job.employerId !== (session.user as any).id) {
+    if (job.employerId !== session.user.id) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
     const updated = await prisma.job.update({ where: { id }, data: body });
     return NextResponse.json(updated);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }
@@ -55,19 +55,19 @@ export async function DELETE(req: Request, context: RouteContext) {
   try {
     const { id } = await context.params;
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== "EMPLOYER") {
+    if (!session?.user || session.user.role !== "EMPLOYER") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const job = await prisma.job.findUnique({ where: { id } });
     if (!job) return NextResponse.json({ message: "Job not found" }, { status: 404 });
-    if (job.employerId !== (session.user as any).id) {
+    if (job.employerId !== session.user.id) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
     await prisma.job.delete({ where: { id } });
     return NextResponse.json({ message: "Job deleted" });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

@@ -13,8 +13,8 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const jobId = searchParams.get("jobId");
-    const role = (session.user as any).role;
-    const userId = (session.user as any).id;
+    const role = session.user.role;
+    const userId = session.user.id;
 
     let applications;
 
@@ -68,7 +68,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== "SEEKER") {
+    if (!session?.user || session.user.role !== "SEEKER") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "jobId is required" }, { status: 400 });
     }
 
-    const seekerId = (session.user as any).id;
+    const seekerId = session.user.id;
 
     // Prevent duplicate applications
     const existing = await prisma.application.findFirst({
