@@ -27,10 +27,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  profile         Profile?
-  employerProfile EmployerProfile?
-  jobs            Job[]         @relation("EmployerJobs")
-  applications    Application[] @relation("SeekerApplications")
+  profile              Profile?
+  employerProfile      EmployerProfile?
+  notificationSettings NotificationSettings?
+  jobs                 Job[]         @relation("EmployerJobs")
+  applications         Application[] @relation("SeekerApplications")
 }
 
 model Profile {
@@ -94,4 +95,14 @@ model EmployerProfile {
   reviewedAt         DateTime?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
+}
+
+model NotificationSettings {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailAlerts     Boolean  @default(true)
+  pushAlerts      Boolean  @default(true)
+  marketingEmails Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
 }
