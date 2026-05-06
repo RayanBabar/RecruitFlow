@@ -4,7 +4,8 @@ import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout
 import { Button } from "@/components/ui/button";
 import {
   Download, Briefcase, Users, Timer,
-  TrendingUp, TrendingDown, Filter, MoreVertical, ArrowRight, PlusCircle
+  TrendingUp, Filter, ArrowRight, PlusCircle,
+  Clock, XCircle, CheckCircle2, AlertTriangle
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -15,9 +16,16 @@ interface DashboardData {
   activeJobs: { id: string; title: string; company: string; type: string; location: string; date: string; applicants: number; status: string }[];
 }
 
+interface EmployerProfile {
+  verificationStatus: "PENDING" | "APPROVED" | "REJECTED";
+  adminNote: string | null;
+  companyName: string;
+}
+
 export default function EmployerDashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [profile, setProfile] = useState<EmployerProfile | null>(null);
 
   useEffect(() => {
     fetch("/api/dashboard/employer")
@@ -25,6 +33,11 @@ export default function EmployerDashboardPage() {
       .then(setData)
       .catch(console.error)
       .finally(() => setIsLoading(false));
+
+    fetch("/api/employer/profile")
+      .then((r) => r.json())
+      .then(setProfile)
+      .catch(console.error);
   }, []);
 
   const stats = data
@@ -43,9 +56,60 @@ export default function EmployerDashboardPage() {
     }
   };
 
+  const verificationBanner = () => {
+    if (!profile || profile.verificationStatus === "APPROVED") return null;
+
+    if (profile.verificationStatus === "PENDING") {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-start gap-3 p-4 border-2 border-amber-500 bg-amber-500/10"
+        >
+          <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-black text-xs uppercase tracking-widest text-amber-700 dark:text-amber-400">
+              Verification Pending
+            </p>
+            <p className="text-xs font-medium text-amber-700/80 dark:text-amber-400/80 mt-1">
+              Your employer account is under review. Job posting will be unlocked once an admin approves your company details.
+            </p>
+          </div>
+        </motion.div>
+      );
+    }
+
+    if (profile.verificationStatus === "REJECTED") {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-start gap-3 p-4 border-2 border-destructive bg-destructive/10"
+        >
+          <XCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-black text-xs uppercase tracking-widest text-destructive">Verification Rejected</p>
+            {profile.adminNote && (
+              <p className="text-xs font-medium text-destructive/80 mt-1">
+                Admin note: {profile.adminNote}
+              </p>
+            )}
+            <p className="text-xs font-medium text-destructive/70 mt-1">
+              Please update your company information and resubmit for review.
+            </p>
+          </div>
+          <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+        </motion.div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <DashboardLayout role="employer">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl mx-auto space-y-8 pb-12">
+        {verificationBanner()}
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div>

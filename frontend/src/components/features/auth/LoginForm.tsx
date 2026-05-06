@@ -42,6 +42,8 @@ export function LoginForm() {
 
         if (role === "EMPLOYER") {
           router.push("/employer/dashboard");
+        } else if (role === "ADMIN") {
+          router.push("/admin/employers");
         } else {
           router.push("/seeker/dashboard");
         }

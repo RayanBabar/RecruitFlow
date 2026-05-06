@@ -6,13 +6,20 @@ export default withAuth(
     const token = req.nextauth.token;
     const path = req.nextUrl.pathname;
 
+    // Protect admin routes — only ADMIN role allowed
+    if (path.startsWith("/admin") && token?.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+
     // Check employer routes
     if (path.startsWith("/employer") && token?.role !== "EMPLOYER") {
+      if (token?.role === "ADMIN") return NextResponse.redirect(new URL("/admin/employers", req.url));
       return NextResponse.redirect(new URL("/seeker/dashboard", req.url));
     }
 
     // Check seeker routes
     if (path.startsWith("/seeker") && token?.role !== "SEEKER") {
+      if (token?.role === "ADMIN") return NextResponse.redirect(new URL("/admin/employers", req.url));
       return NextResponse.redirect(new URL("/employer/dashboard", req.url));
     }
 
@@ -26,5 +33,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/employer/:path*", "/seeker/:path*"],
+  matcher: ["/admin/:path*", "/employer/:path*", "/seeker/:path*"],
 };

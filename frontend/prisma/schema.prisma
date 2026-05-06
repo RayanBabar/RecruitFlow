@@ -6,6 +6,18 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  EMPLOYER
+  SEEKER
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -15,15 +27,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  profile       Profile?
-  jobs          Job[]         @relation("EmployerJobs")  // Jobs posted if employer
-  applications  Application[] @relation("SeekerApplications") // Applications if seeker
-}
-
-enum Role {
-  EMPLOYER
-  SEEKER
-  ADMIN
+  profile         Profile?
+  employerProfile EmployerProfile?
+  jobs            Job[]         @relation("EmployerJobs")
+  applications    Application[] @relation("SeekerApplications")
 }
 
 model Profile {
@@ -71,4 +78,20 @@ model Application {
   updatedAt  DateTime @updatedAt
 
   @@unique([jobId, seekerId]) // A user can only apply to a job once
+}
+
+model EmployerProfile {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName        String
+  companyWebsite     String?
+  companyPhone       String?
+  companyDescription String?
+  registrationNumber String?
+  verificationStatus VerificationStatus @default(PENDING)
+  adminNote          String?
+  reviewedAt         DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }

@@ -10,7 +10,17 @@ const VALID_ROLES: Role[] = ["SEEKER", "EMPLOYER"];
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, password, role } = body;
+    const {
+      name,
+      email,
+      password,
+      role,
+      companyName,
+      companyWebsite,
+      companyPhone,
+      companyDescription,
+      registrationNumber,
+    } = body;
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -21,6 +31,13 @@ export async function POST(req: Request) {
 
     // Validate role — default to SEEKER if not provided or invalid
     const userRole: Role = VALID_ROLES.includes(role) ? role : "SEEKER";
+
+    if (userRole === "EMPLOYER" && !companyName) {
+      return NextResponse.json(
+        { message: "Company name is required for employer accounts" },
+        { status: 400 }
+      );
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -41,6 +58,18 @@ export async function POST(req: Request) {
         email,
         password: hashedPassword,
         role: userRole,
+        ...(userRole === "EMPLOYER" && {
+          employerProfile: {
+            create: {
+              companyName,
+              companyWebsite: companyWebsite || null,
+              companyPhone: companyPhone || null,
+              companyDescription: companyDescription || null,
+              registrationNumber: registrationNumber || null,
+              verificationStatus: "PENDING",
+            },
+          },
+        }),
       },
     });
 

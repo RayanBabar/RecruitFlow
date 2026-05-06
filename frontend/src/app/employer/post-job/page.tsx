@@ -2,11 +2,11 @@
 
 import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout";
 import { postJobData } from "@/data/mockData";
-import { Sparkles, Bold, Italic, List, Link2, X, CheckCircle } from "lucide-react";
+import { Sparkles, Bold, Italic, List, Link2, X, CheckCircle, Clock, XCircle, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function PostJobPage() {
@@ -18,6 +18,9 @@ export default function PostJobPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState<"PENDING" | "APPROVED" | "REJECTED" | null>(null);
+  const [adminNote, setAdminNote] = useState<string | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const companyRef = useRef<HTMLInputElement>(null);
@@ -26,6 +29,17 @@ export default function PostJobPage() {
   const salaryMaxRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const requirementsRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    fetch("/api/employer/profile")
+      .then((r) => r.json())
+      .then((p) => {
+        setVerificationStatus(p?.verificationStatus ?? "PENDING");
+        setAdminNote(p?.adminNote ?? null);
+      })
+      .catch(() => setVerificationStatus("PENDING"))
+      .finally(() => setProfileLoading(false));
+  }, []);
 
   const insertFormatting = (prefix: string, suffix: string = '') => {
     const textarea = descriptionRef.current;
@@ -96,6 +110,67 @@ export default function PostJobPage() {
 
   return (
     <DashboardLayout role="employer">
+      {profileLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : verificationStatus === "PENDING" ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl mx-auto mt-16 space-y-6"
+        >
+          <div className="flex items-start gap-4 p-6 border-2 border-amber-500 bg-amber-500/10">
+            <Clock className="w-8 h-8 text-amber-600 dark:text-amber-400 shrink-0 mt-1" />
+            <div>
+              <h1 className="text-2xl font-black text-foreground uppercase tracking-tighter">Verification Required</h1>
+              <p className="text-sm font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide mt-2">
+                Your employer account is awaiting admin approval.
+              </p>
+              <p className="text-sm font-medium text-muted-foreground mt-3">
+                You cannot post jobs until an administrator has verified your company details. This usually takes 1–2 business days.
+              </p>
+              <Button
+                onClick={() => router.push("/employer/dashboard")}
+                className="mt-4 rounded-none border-2 border-transparent hover:border-foreground font-bold uppercase tracking-widest text-xs"
+              >
+                Back to Dashboard
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      ) : verificationStatus === "REJECTED" ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl mx-auto mt-16 space-y-6"
+        >
+          <div className="flex items-start gap-4 p-6 border-2 border-destructive bg-destructive/10">
+            <XCircle className="w-8 h-8 text-destructive shrink-0 mt-1" />
+            <div>
+              <h1 className="text-2xl font-black text-foreground uppercase tracking-tighter">Verification Rejected</h1>
+              {adminNote && (
+                <div className="mt-3 p-3 border-2 border-destructive/40 bg-background">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">Admin Note</p>
+                  <p className="text-sm font-medium text-foreground">{adminNote}</p>
+                </div>
+              )}
+              <p className="text-sm font-medium text-muted-foreground mt-3">
+                Please contact support or update your company profile and request re-verification.
+              </p>
+              <div className="flex gap-3 mt-4">
+                <Button
+                  onClick={() => router.push("/employer/dashboard")}
+                  variant="outline"
+                  className="rounded-none border-2 border-border font-bold uppercase tracking-widest text-xs"
+                >
+                  Dashboard
+                </Button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      ) : (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -278,6 +353,7 @@ export default function PostJobPage() {
           </Button>
         </div>
       </motion.div>
+      )}
     </DashboardLayout>
   );
 }

@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authData } from "@/data/mockData";
-import { User, Mail, Lock, Briefcase, Search } from "lucide-react";
-import { motion } from "framer-motion";
+import { User, Mail, Lock, Briefcase, Search, Building2, Globe, Phone, FileText, Hash } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -29,12 +29,29 @@ export function SignUpForm() {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const companyName = formData.get("companyName") as string;
+    const companyWebsite = formData.get("companyWebsite") as string;
+    const companyPhone = formData.get("companyPhone") as string;
+    const companyDescription = formData.get("companyDescription") as string;
+    const registrationNumber = formData.get("registrationNumber") as string;
 
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, role: selectedRole }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          role: selectedRole,
+          ...(selectedRole === "EMPLOYER" && {
+            companyName,
+            companyWebsite,
+            companyPhone,
+            companyDescription,
+            registrationNumber,
+          }),
+        }),
       });
 
       if (!res.ok) {
@@ -51,7 +68,6 @@ export function SignUpForm() {
       if (result?.error) {
         setError("Error signing in after registration");
       } else {
-        // Redirect based on role chosen at sign-up
         router.push(selectedRole === "EMPLOYER" ? "/employer/dashboard" : "/seeker/dashboard");
         router.refresh();
       }
@@ -61,6 +77,10 @@ export function SignUpForm() {
       setIsLoading(false);
     }
   };
+
+  const fieldClass =
+    "pl-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-primary transition-colors bg-background";
+  const labelClass = "uppercase tracking-widest text-xs font-bold text-foreground";
 
   return (
     <motion.div
@@ -116,60 +136,143 @@ export function SignUpForm() {
             {error}
           </div>
         )}
-        <form className="space-y-6" onSubmit={handleSubmit}>
+
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* Base fields */}
           <div>
-            <Label htmlFor="name" className="uppercase tracking-widest text-xs font-bold text-foreground">{data.nameLabel}</Label>
+            <Label htmlFor="name" className={labelClass}>{data.nameLabel}</Label>
             <div className="mt-2 relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <User className="text-muted-foreground w-4 h-4" />
               </div>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                autoComplete="name"
-                required
-                placeholder={data.namePlaceholder}
-                className="pl-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-primary transition-colors bg-background"
-              />
+              <Input id="name" name="name" type="text" autoComplete="name" required placeholder={data.namePlaceholder} className={fieldClass} />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="email" className="uppercase tracking-widest text-xs font-bold text-foreground">{data.emailLabel}</Label>
+            <Label htmlFor="email" className={labelClass}>{data.emailLabel}</Label>
             <div className="mt-2 relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail className="text-muted-foreground w-4 h-4" />
               </div>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                placeholder={data.emailPlaceholder}
-                className="pl-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-primary transition-colors bg-background"
-              />
+              <Input id="email" name="email" type="email" autoComplete="email" required placeholder={data.emailPlaceholder} className={fieldClass} />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="password" className="uppercase tracking-widest text-xs font-bold text-foreground">{data.passwordLabel}</Label>
+            <Label htmlFor="password" className={labelClass}>{data.passwordLabel}</Label>
             <div className="mt-2 relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Lock className="text-muted-foreground w-4 h-4" />
               </div>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                placeholder={data.passwordPlaceholder}
-                className="pl-10 border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-primary transition-colors bg-background"
-              />
+              <Input id="password" name="password" type="password" autoComplete="new-password" required placeholder={data.passwordPlaceholder} className={fieldClass} />
             </div>
           </div>
+
+          {/* Employer-only company fields */}
+          <AnimatePresence>
+            {selectedRole === "EMPLOYER" && (
+              <motion.div
+                key="employer-fields"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <div className="space-y-4 pt-2 border-t-2 border-border">
+                  <p className="uppercase tracking-widest text-xs font-bold text-muted-foreground pt-2">
+                    Company Information
+                  </p>
+
+                  <div>
+                    <Label htmlFor="companyName" className={labelClass}>Company Name *</Label>
+                    <div className="mt-2 relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Building2 className="text-muted-foreground w-4 h-4" />
+                      </div>
+                      <Input
+                        id="companyName"
+                        name="companyName"
+                        type="text"
+                        required={selectedRole === "EMPLOYER"}
+                        placeholder="Acme Corp"
+                        className={fieldClass}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="registrationNumber" className={labelClass}>Registration Number</Label>
+                    <div className="mt-2 relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Hash className="text-muted-foreground w-4 h-4" />
+                      </div>
+                      <Input
+                        id="registrationNumber"
+                        name="registrationNumber"
+                        type="text"
+                        placeholder="e.g. 12345678"
+                        className={fieldClass}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="companyWebsite" className={labelClass}>Company Website</Label>
+                    <div className="mt-2 relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Globe className="text-muted-foreground w-4 h-4" />
+                      </div>
+                      <Input
+                        id="companyWebsite"
+                        name="companyWebsite"
+                        type="url"
+                        placeholder="https://acme.com"
+                        className={fieldClass}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="companyPhone" className={labelClass}>Company Phone</Label>
+                    <div className="mt-2 relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Phone className="text-muted-foreground w-4 h-4" />
+                      </div>
+                      <Input
+                        id="companyPhone"
+                        name="companyPhone"
+                        type="tel"
+                        placeholder="+1 (555) 000-0000"
+                        className={fieldClass}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="companyDescription" className={labelClass}>Company Description</Label>
+                    <div className="mt-2">
+                      <textarea
+                        id="companyDescription"
+                        name="companyDescription"
+                        rows={3}
+                        placeholder="Brief description of your company and what you do..."
+                        className="w-full px-3 py-2 border-2 border-border bg-background text-foreground text-sm font-medium rounded-none outline-none focus:border-primary transition-colors resize-none placeholder:text-muted-foreground"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3 border-2 border-amber-500/40 bg-amber-500/10 flex gap-2">
+                    <FileText className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                    <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide leading-relaxed">
+                      Your account will be reviewed by an admin before you can post jobs.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div className="flex items-center">
             <input
@@ -188,7 +291,11 @@ export function SignUpForm() {
           </div>
 
           <div>
-            <Button type="submit" disabled={isLoading} className="w-full uppercase tracking-widest font-bold rounded-none text-sm border-2 border-transparent hover:border-foreground transition-all">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full uppercase tracking-widest font-bold rounded-none text-sm border-2 border-transparent hover:border-foreground transition-all"
+            >
               {isLoading
                 ? "Creating Account..."
                 : `Sign Up as ${selectedRole === "EMPLOYER" ? "Employer" : "Job Seeker"}`}

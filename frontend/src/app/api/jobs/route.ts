@@ -45,6 +45,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
+    // Enforce employer verification
+    const employer = await prisma.user.findUnique({
+      where: { id: (session.user as any).id },
+      include: { employerProfile: true },
+    });
+
+    if (employer?.employerProfile?.verificationStatus !== "APPROVED") {
+      return NextResponse.json(
+        { message: "Your account must be verified by an admin before posting jobs." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { title, company, location, type, salary, description, requirements } = body;
 
