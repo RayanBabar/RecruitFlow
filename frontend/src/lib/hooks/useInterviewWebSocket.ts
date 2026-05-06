@@ -5,21 +5,36 @@ interface InterviewMessage {
   text: string;
 }
 
+export interface InterviewContext {
+  jobData?: {
+    title: string;
+    description: string;
+    requirements?: string;
+  };
+  profileData?: {
+    resumeData?: Record<string, unknown>;
+  };
+}
+
+interface EvaluationData {
+  [key: string]: number;
+}
+
+const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000";
+
 export function useInterviewWebSocket(
   candidateId: string, 
   jobId: string,
-  context: { jobData?: any; profileData?: any } | null = null
+  context: InterviewContext | null = null
 ) {
   const [messages, setMessages] = useState<InterviewMessage[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [evaluation, setEvaluation] = useState<any>(null);
+  const [evaluation, setEvaluation] = useState<EvaluationData | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
-  const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000";
-
   useEffect(() => {
-    if (context === null) return; // Wait until context is loaded
+    if (!context) return; // Wait until context is loaded
 
     // Initialize WebSocket
     const ws = new WebSocket(`${WS_BASE_URL}/ws/interview/${candidateId}-${jobId}`);
@@ -66,7 +81,7 @@ export function useInterviewWebSocket(
             { speaker: "System", text: typeof data === 'string' ? data : JSON.stringify(data) },
           ]);
         }
-      } catch (e) {
+      } catch {
         // Handle non-JSON streaming text
         setMessages((prev) => [
           ...prev,
@@ -91,7 +106,7 @@ export function useInterviewWebSocket(
     return () => {
       ws.close();
     };
-  }, [candidateId, jobId, WS_BASE_URL, context === null]);
+  }, [candidateId, jobId, context]);
 
   const sendMessage = useCallback((text: string) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {

@@ -38,7 +38,7 @@ export function LoginForm() {
       } else {
         // Fetch the session to get the user's role and redirect accordingly
         const session = await getSession();
-        const role = (session?.user as any)?.role;
+        const role = session?.user?.role;
 
         if (role === "EMPLOYER") {
           router.push("/employer/dashboard");
@@ -49,7 +49,7 @@ export function LoginForm() {
         }
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);

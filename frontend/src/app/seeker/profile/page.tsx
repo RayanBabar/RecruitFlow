@@ -1,8 +1,7 @@
 "use client";
 
 import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout";
-import { Edit2, UploadCloud, Sparkles, MapPin, Briefcase, Loader2, CheckCircle, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { UploadCloud, Sparkles, Briefcase, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
@@ -28,7 +27,7 @@ interface ParsedResume {
 }
 
 export default function ProfilePage() {
-  const { data: session } = useSession();
+  useSession();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [parsed, setParsed] = useState<ParsedResume | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,7 +85,7 @@ export default function ProfilePage() {
       // Refresh profile
       const updated = await fetch("/api/profile").then((r) => r.json());
       setProfileData(updated);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Resume upload error:", err);
       setErrorMsg("Could not parse resume. Make sure the AI service is running.");
       setUploadStatus("error");
@@ -108,7 +107,7 @@ export default function ProfilePage() {
     return [];
   })();
 
-  const parsedExperience: any[] = (() => {
+  const parsedExperience = (() => {
     if (parsed?.experience) return parsed.experience;
     try {
       if (profileData?.profile?.experience) return JSON.parse(profileData.profile.experience);
@@ -219,7 +218,7 @@ export default function ProfilePage() {
                   <Briefcase className="w-5 h-5 text-primary" /> Experience Timeline
                 </h3>
                 <div className="relative pl-6 border-l-2 border-border flex flex-col gap-10">
-                  {parsedExperience.map((exp: any, idx) => (
+                  {parsedExperience.map((exp: { role?: string; title?: string; company?: string; duration?: string; period?: string; description?: string }, idx: number) => (
                     <div key={idx} className="relative">
                       <div className={`absolute -left-[27px] top-1 w-4 h-4 border-2 border-card ${idx === 0 ? "bg-primary" : "bg-muted-foreground"}`} />
                       <div className="flex flex-col gap-1">

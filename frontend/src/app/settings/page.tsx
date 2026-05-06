@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Settings as SettingsIcon, Bell, Shield, User, Key, Moon, Sun, Monitor, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,7 @@ interface NotificationSettings {
 
 export default function SettingsPage() {
   const { data: session } = useSession();
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   
   // Notification State
@@ -49,11 +49,6 @@ export default function SettingsPage() {
   const [deleteError, setDeleteError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-    fetchSettings();
-  }, []);
-
   const fetchSettings = async () => {
     try {
       const res = await fetch("/api/user/settings");
@@ -70,6 +65,21 @@ export default function SettingsPage() {
     }
   };
 
+  useEffect(() => {
+    // Wrap in a microtask to avoid synchronous cascading render warning
+    Promise.resolve().then(() => {
+      setMounted(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      Promise.resolve().then(() => {
+        fetchSettings();
+      });
+    }
+  }, [mounted]);
+
   const toggleNotification = async (key: keyof NotificationSettings) => {
     const newSettings = { ...notifications, [key]: !notifications[key] };
     setNotifications(newSettings);
@@ -80,8 +90,8 @@ export default function SettingsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newSettings),
       });
-    } catch (err) {
-      console.error("Failed to update settings:", err);
+    } catch {
+      console.error("Failed to update settings");
       // Rollback on error
       setNotifications(notifications);
     } finally {
@@ -119,7 +129,7 @@ export default function SettingsPage() {
         const data = await res.json();
         setPasswordError(data.message || "Failed to update password");
       }
-    } catch (err) {
+    } catch {
       setPasswordError("An unexpected error occurred");
     } finally {
       setIsUpdatingPassword(false);
@@ -147,7 +157,7 @@ export default function SettingsPage() {
         const data = await res.json();
         setDeleteError(data.message || "Failed to delete account");
       }
-    } catch (err) {
+    } catch {
       setDeleteError("An unexpected error occurred");
     } finally {
       setIsDeleting(false);
@@ -156,7 +166,7 @@ export default function SettingsPage() {
 
   if (!mounted) return null;
   
-  const role = (session?.user as any)?.role;
+  const role = session?.user?.role;
   const backLink = role === "EMPLOYER" 
     ? "/employer/dashboard" 
     : role === "ADMIN" 

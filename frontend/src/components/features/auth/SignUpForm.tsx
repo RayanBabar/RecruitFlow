@@ -71,8 +71,9 @@ export function SignUpForm() {
         router.push(selectedRole === "EMPLOYER" ? "/employer/dashboard" : "/seeker/dashboard");
         router.refresh();
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "An error occurred";
+      setError(message);
     } finally {
       setIsLoading(false);
     }
