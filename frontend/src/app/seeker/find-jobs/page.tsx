@@ -252,14 +252,39 @@ export default function FindJobsPage() {
                             <div className="space-y-4">
                               <div>
                                 <h4 className="font-black text-sm uppercase tracking-widest text-foreground mb-2">Job Description</h4>
-                                <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{job.description}</p>
+                                <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none">
+                                  <ReactMarkdown
+                                    components={{
+                                      strong: ({node, ...props}) => <span className="font-bold text-foreground" {...props} />,
+                                      p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
+                                      ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                                      ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                                      li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
+                                      a: ({node, ...props}) => <a className="text-primary hover:underline font-bold" target="_blank" rel="noopener noreferrer" {...props} />
+                                    }}
+                                  >
+                                    {job.description}
+                                  </ReactMarkdown>
+                                </div>
                               </div>
                               {job.requirements && (
                                 <div>
                                   <h4 className="font-black text-sm uppercase tracking-widest text-foreground mb-2 flex items-center gap-2">
                                     <Flame className="w-4 h-4 text-primary" /> AI Screening Criteria
                                   </h4>
-                                  <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{job.requirements}</p>
+                                  <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none">
+                                    <ReactMarkdown
+                                      components={{
+                                        strong: ({node, ...props}) => <span className="font-bold text-foreground" {...props} />,
+                                        p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />,
+                                        ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                                        ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                                        li: ({node, ...props}) => <li className="leading-relaxed" {...props} />,
+                                      }}
+                                    >
+                                      {job.requirements}
+                                    </ReactMarkdown>
+                                  </div>
                                 </div>
                               )}
                             </div>

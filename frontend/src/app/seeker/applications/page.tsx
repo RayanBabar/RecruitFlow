@@ -4,6 +4,7 @@ import { DashboardLayout } from "@/components/features/dashboard/DashboardLayout
 import { motion } from "framer-motion";
 import { FileText, Clock, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface Application {
   id: string;
@@ -128,9 +129,19 @@ export default function ApplicationsPage() {
                         )}
                       </td>
                       <td className="p-4">
-                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 border-2 font-bold text-xs uppercase tracking-widest ${cfg.color}`}>
-                          <StatusIcon status={app.status} /> {cfg.label}
-                        </span>
+                        <div className="flex items-center justify-between">
+                          <span className={`inline-flex items-center gap-1.5 px-3 py-1 border-2 font-bold text-xs uppercase tracking-widest ${cfg.color}`}>
+                            <StatusIcon status={app.status} /> {cfg.label}
+                          </span>
+                          {app.status === "INTERVIEWING" && (
+                            <Button 
+                              onClick={() => window.location.href = `/seeker/interview?jobId=${app.job.id}`}
+                              className="bg-primary text-primary-foreground font-bold text-xs uppercase tracking-widest h-8 px-4 rounded-none border-2 border-transparent hover:border-foreground"
+                            >
+                              Start Interview
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </motion.tr>
                   );

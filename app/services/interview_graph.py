@@ -57,7 +57,7 @@ def hr_agent(state: InterviewState):
         f"\n\nCANDIDATE RESUME DATA:\n{resume}"
         "\n\nInstructions: Ask exactly one behavioral question at a time. Do not answer for the candidate. "
         "Keep your responses very concise and conversational (1-3 sentences max). "
-        "If you have asked 2 questions and received responses, or if you feel the behavioral assessment is complete, "
+        "If you have asked 4 questions and received responses, or if you feel the behavioral assessment is complete, "
         "you MUST output the exact keyword '<HANDOFF_TO_TECH>' at the end of your message to transition to the Technical round."
     ))
     
@@ -66,7 +66,7 @@ def hr_agent(state: InterviewState):
     
     response = llm.invoke(conversation)
     
-    return {"messages": [response]}
+    return {"messages": [response], "current_agent": "hr"}
 
 def tech_agent(state: InterviewState):
     """
@@ -85,7 +85,7 @@ def tech_agent(state: InterviewState):
         f"\n\nCANDIDATE RESUME DATA:\n{resume}"
         "\n\nInstructions: Ask exactly one technical question at a time. Do not answer for the candidate. "
         "Keep your responses concise and conversational (1-3 sentences max). "
-        "If you have asked 2 questions and received responses, or if you feel the technical assessment is complete, "
+        "If you have asked 4 questions and received responses, or if you feel the technical assessment is complete, "
         "you MUST output the exact keyword '<END_INTERVIEW>' to finish the interview and provide brief feedback."
     ))
     
@@ -94,7 +94,7 @@ def tech_agent(state: InterviewState):
     
     response = llm.invoke(conversation)
     
-    return {"messages": [response]}
+    return {"messages": [response], "current_agent": "technical"}
 
 # ---------------------------------------------------------------------------
 # Routing Logic
@@ -115,10 +115,10 @@ def router(state: InterviewState) -> Literal["hr_agent", "tech_agent", "__end__"
     
     # If the last message was from a user, we route to the appropriate agent
     if isinstance(last_message, HumanMessage):
-        if state.get("current_agent") == "hr":
-            return "hr_agent"
-        else:
+        if state.get("current_agent") == "technical":
             return "tech_agent"
+        else:
+            return "hr_agent"
             
     # If the last message was from an AI, check for transition keywords
     if isinstance(last_message, AIMessage):
@@ -139,6 +139,47 @@ def router(state: InterviewState) -> Literal["hr_agent", "tech_agent", "__end__"
         return END
 
     return END
+
+# ---------------------------------------------------------------------------
+# Evaluation Logic
+# ---------------------------------------------------------------------------
+from pydantic import BaseModel, Field
+import json
+
+class InterviewEvaluation(BaseModel):
+    hr_score: int = Field(description="HR/Behavioral score from 0 to 100")
+    technical_score: int = Field(description="Technical score from 0 to 100")
+    improvement_areas: str = Field(description="Areas where the candidate can improve")
+
+def generate_interview_evaluation(messages: list[AnyMessage], resume: dict, jd: str) -> dict:
+    """Evaluates the entire interview transcript and returns scores and feedback."""
+    eval_llm = llm.with_structured_output(InterviewEvaluation)
+    
+    transcript = ""
+    for msg in messages:
+        if isinstance(msg, HumanMessage):
+            transcript += f"Candidate: {msg.content}\n"
+        elif isinstance(msg, AIMessage):
+            transcript += f"Interviewer: {msg.content}\n"
+            
+    prompt = SystemMessage(content=(
+        "You are an expert Interview Evaluator. Review the transcript of this mock interview "
+        "along with the job description and candidate resume. Provide an objective evaluation.\n\n"
+        f"JOB DESCRIPTION:\n{jd}\n\n"
+        f"CANDIDATE RESUME:\n{resume}\n\n"
+        f"TRANSCRIPT:\n{transcript}"
+    ))
+    
+    try:
+        evaluation = eval_llm.invoke([prompt])
+        return evaluation.dict()
+    except Exception as e:
+        # Fallback if structured output fails
+        return {
+            "hr_score": 75,
+            "technical_score": 75,
+            "improvement_areas": "Failed to generate structured evaluation. Please review transcript manually."
+        }
 
 # ---------------------------------------------------------------------------
 # Graph Compilation

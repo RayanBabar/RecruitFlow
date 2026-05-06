@@ -27,6 +27,23 @@ export default function PostJobPage() {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const requirementsRef = useRef<HTMLTextAreaElement>(null);
 
+  const insertFormatting = (prefix: string, suffix: string = '') => {
+    const textarea = descriptionRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const before = text.substring(0, start);
+    const selected = text.substring(start, end);
+    const after = text.substring(end);
+
+    textarea.value = `${before}${prefix}${selected}${suffix}${after}`;
+    
+    textarea.focus();
+    textarea.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
+  };
+
   const handlePublish = async () => {
     setError("");
     const title = titleRef.current?.value?.trim();
@@ -169,11 +186,18 @@ export default function PostJobPage() {
             <label className="font-bold text-xs text-foreground uppercase tracking-widest block mb-3">Job Description *</label>
             <div className="border-2 border-border overflow-hidden">
               <div className="bg-secondary/50 border-b-2 border-border p-2 flex gap-1">
-                {[Bold, Italic, List, Link2].map((Icon, i) => (
-                  <button key={i} type="button" className="p-2 hover:bg-secondary border-2 border-transparent hover:border-border transition-colors text-muted-foreground hover:text-foreground">
-                    <Icon className="w-4 h-4" />
-                  </button>
-                ))}
+                <button type="button" onClick={() => insertFormatting('**', '**')} className="p-2 hover:bg-secondary border-2 border-transparent hover:border-border transition-colors text-muted-foreground hover:text-foreground">
+                  <Bold className="w-4 h-4" />
+                </button>
+                <button type="button" onClick={() => insertFormatting('*', '*')} className="p-2 hover:bg-secondary border-2 border-transparent hover:border-border transition-colors text-muted-foreground hover:text-foreground">
+                  <Italic className="w-4 h-4" />
+                </button>
+                <button type="button" onClick={() => insertFormatting('- ')} className="p-2 hover:bg-secondary border-2 border-transparent hover:border-border transition-colors text-muted-foreground hover:text-foreground">
+                  <List className="w-4 h-4" />
+                </button>
+                <button type="button" onClick={() => insertFormatting('[', '](url)')} className="p-2 hover:bg-secondary border-2 border-transparent hover:border-border transition-colors text-muted-foreground hover:text-foreground">
+                  <Link2 className="w-4 h-4" />
+                </button>
               </div>
               <textarea
                 ref={descriptionRef}

@@ -3,7 +3,7 @@ import json
 import logging
 from langchain_core.messages import HumanMessage
 
-from app.services.interview_graph import interview_graph
+from app.services.interview_graph import interview_graph, generate_interview_evaluation
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -114,7 +114,31 @@ async def interview_websocket(websocket: WebSocket, session_id: str):
                                 content = content.replace("<END_INTERVIEW>", "").strip()
                                 if content:
                                     await websocket.send_json({"type": "agent", "agent": node_name, "content": content})
-                                await websocket.send_json({"type": "system", "content": "Interview Concluded."})
+                                await websocket.send_json({"type": "system", "content": "Interview Concluded. Generating evaluation..."})
+                                
+                                # Generate evaluation using the conversation history
+                                try:
+                                    # Use asyncio.to_thread because the LLM call is synchronous
+                                    import asyncio
+                                    # Fetch current state directly from the graph
+                                    current_state = interview_graph.get_state(config)
+                                    state_values = current_state.values
+                                    
+                                    resume_data = state_values.get("resume_data", {})
+                                    job_desc = state_values.get("job_description", "")
+                                    msgs = state_values.get("messages", [])
+                                    
+                                    evaluation = await asyncio.to_thread(
+                                        generate_interview_evaluation,
+                                        msgs,
+                                        resume_data,
+                                        job_desc
+                                    )
+                                    await websocket.send_json({"type": "evaluation", "scores": evaluation})
+                                except Exception as e:
+                                    logger.error(f"Evaluation generation failed: {e}")
+                                    await websocket.send_json({"type": "error", "message": "Failed to generate evaluation."})
+                                    
                                 await websocket.close()
                                 return
                                 

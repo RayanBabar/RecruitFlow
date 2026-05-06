@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useInterviewWebSocket } from "@/lib/hooks/useInterviewWebSocket";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
 const SPEAKER_COLORS: Record<string, string> = {
   HR: "bg-primary text-primary-foreground",
@@ -23,14 +24,105 @@ const SPEAKER_LABELS: Record<string, string> = {
   System: "SYS",
 };
 
-export default function MockInterviewPage() {
+interface Application {
+  id: string;
+  status: string;
+  job: { id: string; title: string; company: string; location: string; type: string };
+}
+
+function JobSelectionView() {
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/applications")
+      .then((r) => r.json())
+      .then(setApplications)
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const interviewingJobs = applications.filter(a => a.status === "INTERVIEWING");
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 p-6 max-w-4xl mx-auto">
+      <div className="pb-6 border-b-2 border-border">
+        <h1 className="text-3xl font-black uppercase tracking-tight">Select an Interview</h1>
+        <p className="text-muted-foreground font-medium mt-2">Choose an application to start your AI mock interview session.</p>
+      </div>
+
+      {interviewingJobs.length === 0 ? (
+        <div className="text-center p-12 border-2 border-dashed border-border bg-card">
+          <p className="font-bold text-muted-foreground uppercase tracking-widest text-sm">No Active Interviews</p>
+          <p className="text-muted-foreground mt-2 text-sm">You do not have any applications currently in the interviewing stage.</p>
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {interviewingJobs.map((app) => (
+            <div key={app.id} className="bg-card border-2 border-border p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-xl uppercase tracking-tight">{app.job.title}</h3>
+                <p className="text-muted-foreground font-medium mt-1">{app.job.company} • {app.job.location}</p>
+              </div>
+              <Button
+                onClick={() => window.location.href = `/seeker/interview?jobId=${app.job.id}`}
+                className="h-12 px-6 border-2 border-transparent hover:border-foreground rounded-none bg-primary text-primary-foreground font-black uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] transition-all"
+              >
+                Start Interview
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+function InterviewContent() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const userId = (session?.user as any)?.id ?? "guest";
+  
   // Use a stable session/job ID combo — in a real flow, pick the jobId from route param
   const sessionId = `${userId}-interview`;
-  const jobId = "general";
+  const jobId = searchParams.get("jobId");
 
-  const { messages, isConnected, error, sendMessage } = useInterviewWebSocket(sessionId, jobId);
+  const [jobData, setJobData] = useState<any>(null);
+  const [profileData, setProfileData] = useState<any>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  useEffect(() => {
+    if (jobId === "general") {
+      setIsInitializing(false);
+      return;
+    }
+    
+    Promise.all([
+      fetch(`/api/jobs/${jobId}`).then(res => res.json()),
+      fetch("/api/profile").then(res => res.json())
+    ]).then(([jobRes, profileRes]) => {
+      if (jobRes?.job) setJobData(jobRes.job);
+      if (profileRes?.profile) setProfileData(profileRes.profile);
+      setIsInitializing(false);
+    }).catch((e) => {
+      console.error("Failed to load interview context:", e);
+      setIsInitializing(false);
+    });
+  }, [jobId]);
+
+  const { messages, isConnected, error, sendMessage, evaluation } = useInterviewWebSocket(
+    sessionId, 
+    jobId || "general",
+    isInitializing ? null : { jobData, profileData }
+  );
   const [input, setInput] = useState("");
   const [isEnded, setIsEnded] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -180,8 +272,43 @@ export default function MockInterviewPage() {
           <div ref={bottomRef} />
         </div>
 
+        {/* Evaluation Scorecard */}
+        {evaluation && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 bg-card border-t-2 border-border z-10">
+            <div className="max-w-4xl mx-auto border-2 border-border bg-background p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]">
+              <h2 className="text-2xl font-black uppercase tracking-tight text-center mb-6">Interview Evaluation</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-primary/10 border-2 border-primary p-6 text-center">
+                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-2">HR & Cultural Fit</p>
+                  <p className="text-5xl font-black text-primary">{evaluation.hr_score}<span className="text-2xl text-muted-foreground">/100</span></p>
+                </div>
+                <div className="bg-secondary border-2 border-foreground p-6 text-center">
+                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-2">Technical Assessment</p>
+                  <p className="text-5xl font-black text-foreground">{evaluation.technical_score}<span className="text-2xl text-muted-foreground">/100</span></p>
+                </div>
+              </div>
+
+              <div className="bg-card border-2 border-border p-6">
+                <h3 className="font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" /> 
+                  Areas for Improvement
+                </h3>
+                <p className="text-foreground whitespace-pre-wrap leading-relaxed">{evaluation.improvement_areas}</p>
+              </div>
+
+              <div className="mt-8 text-center">
+                <Button onClick={() => window.location.href = '/seeker/applications'} className="h-12 px-8 border-2 border-transparent hover:border-foreground rounded-none bg-primary text-primary-foreground font-black uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] transition-all">
+                  Return to Dashboard
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Chat Input Area */}
-        <div className="bg-secondary/50 border-t-2 border-border p-6 flex-shrink-0 z-10">
+        {!evaluation && (
+          <div className="bg-secondary/50 border-t-2 border-border p-6 flex-shrink-0 z-10">
           {isEnded ? (
             <div className="text-center">
               <p className="font-bold text-muted-foreground uppercase tracking-widest text-xs">Interview session ended. Refresh to start a new session.</p>
@@ -217,7 +344,31 @@ export default function MockInterviewPage() {
             </p>
           </div>
         </div>
+        )}
       </motion.div>
     </DashboardLayout>
+  );
+}
+
+function InterviewContainer() {
+  const searchParams = useSearchParams();
+  const jobId = searchParams.get("jobId");
+
+  if (!jobId) {
+    return (
+      <DashboardLayout role="seeker">
+        <JobSelectionView />
+      </DashboardLayout>
+    );
+  }
+
+  return <InterviewContent />;
+}
+
+export default function MockInterviewPage() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center text-muted-foreground"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></div>}>
+      <InterviewContainer />
+    </Suspense>
   );
 }
