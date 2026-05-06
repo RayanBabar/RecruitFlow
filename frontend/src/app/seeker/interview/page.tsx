@@ -50,7 +50,7 @@ function JobSelectionView() {
     );
   }
 
-  const interviewingJobs = applications.filter(a => a.status === "INTERVIEWING");
+  const appliedJobs = applications;
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 p-6 max-w-4xl mx-auto">
@@ -59,14 +59,14 @@ function JobSelectionView() {
         <p className="text-muted-foreground font-medium mt-2">Choose an application to start your AI mock interview session.</p>
       </div>
 
-      {interviewingJobs.length === 0 ? (
+      {appliedJobs.length === 0 ? (
         <div className="text-center p-12 border-2 border-dashed border-border bg-card">
-          <p className="font-bold text-muted-foreground uppercase tracking-widest text-sm">No Active Interviews</p>
-          <p className="text-muted-foreground mt-2 text-sm">You do not have any applications currently in the interviewing stage.</p>
+          <p className="font-bold text-muted-foreground uppercase tracking-widest text-sm">No Applications Found</p>
+          <p className="text-muted-foreground mt-2 text-sm">You do not have any applications yet to practice a mock interview on.</p>
         </div>
       ) : (
         <div className="grid gap-4">
-          {interviewingJobs.map((app) => (
+          {appliedJobs.map((app) => (
             <div key={app.id} className="bg-card border-2 border-border p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-xl uppercase tracking-tight">{app.job.title}</h3>
@@ -91,8 +91,8 @@ function InterviewContent() {
   const searchParams = useSearchParams();
   const userId = (session?.user as any)?.id ?? "guest";
   
-  // Use a stable session/job ID combo — in a real flow, pick the jobId from route param
-  const sessionId = `${userId}-interview`;
+  // Use a unique session ID for each interview attempt so LangGraph memory doesn't carry over
+  const [sessionId] = useState(() => `${userId}-interview-${Date.now()}`);
   const jobId = searchParams.get("jobId");
 
   const [jobData, setJobData] = useState<any>(null);

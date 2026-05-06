@@ -78,14 +78,16 @@ def tech_agent(state: InterviewState):
     
     sys_prompt = SystemMessage(content=(
         "You are a Senior Engineering Manager conducting the technical portion of a mock interview. "
-        "The HR recruiter has just handed the candidate over to you. "
+        "The HR recruiter has just handed the candidate over to you. The conversation history above is between the HR recruiter and the candidate. "
+        "YOU have not asked any questions yet. "
         "Your goal is to assess the candidate's hard skills, system design knowledge, and problem-solving abilities "
         "based strictly on the technologies mentioned in the Job Description and the candidate's resume. "
         f"\n\nJOB DESCRIPTION:\n{jd}"
         f"\n\nCANDIDATE RESUME DATA:\n{resume}"
         "\n\nInstructions: Ask exactly one technical question at a time. Do not answer for the candidate. "
         "Keep your responses concise and conversational (1-3 sentences max). "
-        "If you have asked 4 questions and received responses, or if you feel the technical assessment is complete, "
+        "Start your first message by introducing yourself as the Engineering Manager and asking your first technical question. "
+        "Once YOU personally have asked 3 to 4 technical questions and received responses to them, "
         "you MUST output the exact keyword '<END_INTERVIEW>' to finish the interview and provide brief feedback."
     ))
     
@@ -100,6 +102,12 @@ def tech_agent(state: InterviewState):
 # Routing Logic
 # ---------------------------------------------------------------------------
 
+def start_router(state: InterviewState) -> Literal["hr_agent", "tech_agent"]:
+    """Routes the new user input to the correct agent."""
+    if state.get("current_agent") == "technical":
+        return "tech_agent"
+    return "hr_agent"
+
 def router(state: InterviewState) -> Literal["hr_agent", "tech_agent", "__end__"]:
     """
     Determines the next node based on the current state and latest message.
@@ -113,13 +121,6 @@ def router(state: InterviewState) -> Literal["hr_agent", "tech_agent", "__end__"
         
     last_message = messages[-1]
     
-    # If the last message was from a user, we route to the appropriate agent
-    if isinstance(last_message, HumanMessage):
-        if state.get("current_agent") == "technical":
-            return "tech_agent"
-        else:
-            return "hr_agent"
-            
     # If the last message was from an AI, check for transition keywords
     if isinstance(last_message, AIMessage):
         content = str(last_message.content)
@@ -194,8 +195,8 @@ def build_interview_graph():
     workflow.add_node("tech_agent", tech_agent)
     
     # Add routing edges
-    # START -> HR Agent
-    workflow.add_edge(START, "hr_agent")
+    # START -> conditional routing
+    workflow.add_conditional_edges(START, start_router)
     
     # HR Agent outputs go to the router
     workflow.add_conditional_edges("hr_agent", router)
