@@ -56,7 +56,3 @@ def health_check():
     modal_url = os.getenv("MODAL_ENDPOINT_URL", "")
     backend = "modal-gpu" if (use_modal and modal_url) else "ollama-local"
     return {"status": "ok", "backend": backend, "modal_configured": bool(modal_url)}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
