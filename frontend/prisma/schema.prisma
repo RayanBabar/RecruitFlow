@@ -33,6 +33,7 @@ model User {
   jobs                 Job[]         @relation("EmployerJobs")
   applications         Application[] @relation("SeekerApplications")
   notifications        Notification[] @relation("UserNotifications")
+  messages             Message[]
 }
 
 model Profile {
@@ -78,6 +79,8 @@ model Application {
   aiRequirementChecks String? // JSON array of AI requirement evaluations
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  messages    Message[]
+  actions     ApplicationAction[]
 
   @@unique([jobId, seekerId]) // A user can only apply to a job once
 }
@@ -118,4 +121,23 @@ model Notification {
   link      String?
   unread    Boolean  @default(true)
   createdAt DateTime @default(now())
+}
+
+model Message {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  senderId      String
+  sender        User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content       String
+  createdAt     DateTime    @default(now())
+}
+
+model ApplicationAction {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  type          String      // REQUEST_SLOTS, SEND_LINK, CUSTOM
+  metadata      Json?       // To store link, requested slots, etc.
+  createdAt     DateTime    @default(now())
 }

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import { employerDashboardData, seekerDashboardData, dashboardNav } from "@/data/mockData";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Notification {
@@ -47,7 +47,7 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
   const userData = dashboardData.user;
   const unreadCount = notifications.filter((n) => n.unread).length;
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       const res = await fetch("/api/notifications");
       if (res.ok) {
@@ -59,7 +59,7 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const markAsRead = async (id: string) => {
     // Optimistic update
@@ -88,13 +88,11 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
   };
 
   useEffect(() => {
-    Promise.resolve().then(() => {
-      fetchNotifications();
-    });
-    // Poll for new notifications every minute
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchNotifications();
     const interval = setInterval(fetchNotifications, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchNotifications]);
 
   // Close notifications when clicking outside
   useEffect(() => {

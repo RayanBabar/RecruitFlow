@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { FileText, Clock, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { MessageSquare } from "lucide-react";
+import { CommunicationModal } from "@/components/features/applications/CommunicationModal";
 
 interface Application {
   id: string;
@@ -43,6 +45,8 @@ export default function ApplicationsPage() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [isCommsOpen, setIsCommsOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/applications")
@@ -129,10 +133,23 @@ export default function ApplicationsPage() {
                         )}
                       </td>
                       <td className="p-4">
-                        <div className="flex items-center justify-between">
-                          <span className={`inline-flex items-center gap-1.5 px-3 py-1 border-2 font-bold text-xs uppercase tracking-widest ${cfg.color}`}>
-                            <StatusIcon status={app.status} /> {cfg.label}
-                          </span>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 border-2 font-bold text-xs uppercase tracking-widest ${cfg.color}`}>
+                              <StatusIcon status={app.status} /> {cfg.label}
+                            </span>
+                            <Button 
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                setSelectedApp(app);
+                                setIsCommsOpen(true);
+                              }}
+                              className="rounded-none border-2 border-border hover:border-foreground h-8 w-8 p-0"
+                            >
+                              <MessageSquare className="w-4 h-4 text-primary" />
+                            </Button>
+                          </div>
                           {app.status === "INTERVIEWING" && (
                             <Button 
                               onClick={() => window.location.href = `/seeker/interview?jobId=${app.job.id}`}
@@ -150,6 +167,16 @@ export default function ApplicationsPage() {
             </table>
           )}
         </div>
+
+        {selectedApp && (
+          <CommunicationModal 
+            isOpen={isCommsOpen}
+            onClose={() => setIsCommsOpen(false)}
+            applicationId={selectedApp.id}
+            seekerName={selectedApp.job.company} // For seeker, show company name
+            jobTitle={selectedApp.job.title}
+          />
+        )}
       </motion.div>
     </DashboardLayout>
   );

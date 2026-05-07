@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { CommunicationModal } from "@/components/features/applications/CommunicationModal";
 
 interface Application {
   id: string;
@@ -66,6 +67,8 @@ function PipelineContent() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortBy, setSortBy] = useState("AI Match");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [isCommsOpen, setIsCommsOpen] = useState(false);
 
   // Load all employer jobs for the job selector
   useEffect(() => {
@@ -349,6 +352,16 @@ function PipelineContent() {
                                   <MessageSquare className="w-4 h-4" />
                                 </button>
                               )}
+                              <button
+                                onClick={() => {
+                                  setSelectedApp(app);
+                                  setIsCommsOpen(true);
+                                }}
+                                title="Communication Hub"
+                                className="p-1.5 text-foreground hover:bg-secondary border-2 border-transparent hover:border-border transition-colors"
+                              >
+                                <MessageSquare className="w-4 h-4 text-primary" />
+                              </button>
                               {app.status !== "REJECTED" && (
                                 <button
                                   onClick={() => updateStatus(app.id, "REJECTED")}
@@ -386,6 +399,16 @@ function PipelineContent() {
             </div>
           )}
         </div>
+
+        {selectedApp && (
+          <CommunicationModal 
+            isOpen={isCommsOpen}
+            onClose={() => setIsCommsOpen(false)}
+            applicationId={selectedApp.id}
+            seekerName={selectedApp.seeker.name}
+            jobTitle={selectedApp.job.title}
+          />
+        )}
       </motion.div>
     </DashboardLayout>
   );
