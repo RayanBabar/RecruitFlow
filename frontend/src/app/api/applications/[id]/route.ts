@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { sendEmail } from "@/lib/mail";
+import { getStatusUpdateEmailHtml } from "@/components/shared/EmailTemplates";
 
 export const dynamic = "force-dynamic";
 
@@ -69,11 +71,18 @@ export async function PATCH(req: Request, context: RouteContext) {
             company: true,
           },
         },
+        seeker: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
-    // Create notification for seeker
+    // Create notifications
     try {
+      // 1. In-app notification
       await prisma.notification.create({
         data: {
           userId: application.seekerId,
@@ -84,9 +93,22 @@ export async function PATCH(req: Request, context: RouteContext) {
           unread: true,
         },
       });
+
+      // 2. Email notification
+      if (application.seeker.email) {
+        await sendEmail({
+          to: application.seeker.email,
+          subject: `Update: Application for ${application.job.title} at ${application.job.company}`,
+          html: getStatusUpdateEmailHtml(
+            application.seeker.name || "Candidate",
+            application.job.title,
+            application.job.company,
+            status
+          ),
+        });
+      }
     } catch (notifError) {
-      console.error("Failed to create status notification:", notifError);
-      // Don't fail the status update if notification fails
+      console.error("Failed to send notifications:", notifError);
     }
 
     return NextResponse.json(application);
