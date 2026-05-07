@@ -88,7 +88,11 @@ export function CommunicationModal({ isOpen, onClose, applicationId, seekerName,
         body: JSON.stringify({ type, metadata }),
       });
       if (res.ok) {
-        setNewMessage(`[Action] Sent ${type.toLowerCase().replace("_", " ")}`);
+        if (type === "SEND_LINK") {
+          setNewMessage(`[INTERVIEW LINK] ${metadata.instructions} — ${metadata.url}`);
+        } else {
+          setNewMessage(`[Action] Sent ${type.toLowerCase().replace("_", " ")}`);
+        }
         handleSendMessage();
       }
     } catch (error) {
