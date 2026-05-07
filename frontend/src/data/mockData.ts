@@ -143,6 +143,11 @@ export const employerDashboardData = {
     { title: "Product Design Lead", type: "New York, NY • Hybrid", date: "Oct 10, 2023", department: "Design", applicants: 86, statusColor: "emerald" },
     { title: "Marketing Manager", type: "London, UK • On-site", date: "Oct 05, 2023", department: "Marketing", applicants: 215, statusColor: "amber" },
     { title: "Data Scientist", type: "Remote • Full-time", date: "Sep 28, 2023", department: "Engineering", applicants: 42, statusColor: "rose" }
+  ],
+  notifications: [
+    { id: "1", title: "New Application", message: "Elena Smith applied for Senior Frontend Engineer", time: "2m ago", unread: true },
+    { id: "2", title: "Interview Completed", message: "Marcus Johnson finished his AI Mock Interview", time: "1h ago", unread: true },
+    { id: "3", title: "System Update", message: "Enterprise AI models have been updated to v4.2", time: "5h ago", unread: false }
   ]
 };
 
@@ -162,6 +167,11 @@ export const seekerDashboardData = {
     { company: "Airbnb", initial: "A", role: "Product Designer", date: "Oct 22, 2023", status: "Under Review", statusColor: "amber" },
     { company: "Netflix", initial: "N", role: "UX Researcher", date: "Oct 18, 2023", status: "Applied", statusColor: "slate" },
     { company: "Spotify", initial: "S", role: "Full Stack Developer", date: "Oct 15, 2023", status: "Rejected", statusColor: "rose" }
+  ],
+  notifications: [
+    { id: "1", title: "Shortlisted!", message: "Stripe has shortlisted you for Senior Frontend Engineer", time: "5m ago", unread: true },
+    { id: "2", title: "New Job Match", message: "A new role matches your profile: Frontend Lead @ Airbnb", time: "2h ago", unread: true },
+    { id: "3", title: "Profile Viewed", message: "Netflix HR viewed your profile", time: "1d ago", unread: false }
   ]
 };
 

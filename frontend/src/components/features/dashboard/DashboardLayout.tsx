@@ -8,6 +8,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import { employerDashboardData, seekerDashboardData, dashboardNav } from "@/data/mockData";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  link: string | null;
+  unread: boolean;
+  createdAt: string;
+}
+
+interface DashboardUser {
+  initials: string;
+  name: string;
+  role: string;
+}
+
+interface DashboardData {
+  user: DashboardUser;
+  notifications: Notification[];
+}
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -15,7 +38,74 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, role }: DashboardLayoutProps) {
-  const userData = role === "employer" ? employerDashboardData.user : seekerDashboardData.user;
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const notificationRef = useRef<HTMLDivElement>(null);
+  
+  const dashboardData = role === "employer" ? employerDashboardData : seekerDashboardData;
+  const userData = dashboardData.user;
+  const unreadCount = notifications.filter((n) => n.unread).length;
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await fetch("/api/notifications");
+      if (res.ok) {
+        const data = await res.json();
+        setNotifications(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const markAsRead = async (id: string) => {
+    // Optimistic update
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, unread: false } : n));
+    try {
+      await fetch("/api/notifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, unread: false }),
+      });
+    } catch (error) {
+      console.error("Failed to mark as read:", error);
+      // Rollback? Maybe not worth it for unread status
+    }
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+  };
+
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      fetchNotifications();
+    });
+    // Poll for new notifications every minute
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Close notifications when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background font-body text-foreground flex">
@@ -48,16 +138,80 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-4">
-              <button className="text-foreground hover:bg-secondary border-2 border-transparent hover:border-border p-2 transition-colors relative">
-                <Bell className="w-5 h-5" />
-                {role === "seeker" && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-primary"></span>
-                )}
-              </button>
-              <button className="text-foreground hover:bg-secondary border-2 border-transparent hover:border-border p-2 transition-colors hidden sm:block">
-                <MessageSquare className="w-5 h-5" />
-              </button>
+            <div className="flex items-center gap-4 relative">
+              <div className="relative" ref={notificationRef}>
+                <button 
+                  onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                  className={`text-foreground hover:bg-secondary border-2 transition-colors relative p-2 ${
+                    isNotificationsOpen ? "border-foreground bg-secondary" : "border-transparent hover:border-border"
+                  }`}
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-primary"></span>
+                  )}
+                </button>
+
+                {/* Notification Popover */}
+                <AnimatePresence>
+                  {isNotificationsOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 mt-2 w-80 bg-card border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] z-50 overflow-hidden"
+                    >
+                      <div className="p-4 border-b-2 border-border bg-secondary/30 flex justify-between items-center">
+                        <h3 className="font-black text-xs uppercase tracking-widest">Notifications</h3>
+                        <span className="bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5">
+                          {unreadCount} New
+                        </span>
+                      </div>
+                      <div className="max-h-96 overflow-y-auto divide-y-2 divide-border">
+                        {isLoading ? (
+                          <div className="p-8 flex flex-col items-center justify-center text-center">
+                            <div className="w-8 h-8 border-4 border-primary border-t-transparent animate-spin mb-2"></div>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Syncing...</span>
+                          </div>
+                        ) : notifications.length === 0 ? (
+                          <div className="p-8 text-center">
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">No new updates</p>
+                          </div>
+                        ) : (
+                          notifications.map((n) => (
+                            <div 
+                              key={n.id} 
+                              onClick={() => n.unread && markAsRead(n.id)}
+                              className={`p-4 hover:bg-secondary/20 transition-colors cursor-pointer group ${n.unread ? "bg-primary/5" : ""}`}
+                            >
+                              <div className="flex justify-between items-start mb-1">
+                                <span className={`font-black text-[10px] uppercase tracking-widest ${
+                                  n.type === "SUCCESS" ? "text-emerald-500" : 
+                                  n.type === "WARNING" ? "text-amber-500" : 
+                                  n.type === "ERROR" ? "text-rose-500" : "text-primary"
+                                }`}>
+                                  {n.title}
+                                </span>
+                                <span className="text-[9px] font-bold text-muted-foreground uppercase">{formatTime(n.createdAt)}</span>
+                              </div>
+                              <p className="text-xs font-bold text-foreground leading-tight">{n.message}</p>
+                              {n.unread && (
+                                <div className="mt-2 flex justify-end">
+                                  <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                      <button className="w-full p-3 bg-secondary/50 border-t-2 border-border font-black text-[10px] uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors">
+                        View All Activity
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               
               {role === "employer" && (
                 <Button asChild className="hidden md:flex rounded-none font-bold uppercase tracking-widest text-xs border-2 border-transparent hover:border-foreground">

@@ -32,6 +32,7 @@ model User {
   notificationSettings NotificationSettings?
   jobs                 Job[]         @relation("EmployerJobs")
   applications         Application[] @relation("SeekerApplications")
+  notifications        Notification[] @relation("UserNotifications")
 }
 
 model Profile {
@@ -105,4 +106,16 @@ model NotificationSettings {
   pushAlerts      Boolean  @default(true)
   marketingEmails Boolean  @default(false)
   updatedAt       DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, SUCCESS, WARNING, ERROR
+  link      String?
+  unread    Boolean  @default(true)
+  createdAt DateTime @default(now())
 }

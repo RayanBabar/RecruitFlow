@@ -62,7 +62,32 @@ export async function PATCH(req: Request, context: RouteContext) {
     const application = await prisma.application.update({
       where: { id },
       data: { status },
+      include: {
+        job: {
+          select: {
+            title: true,
+            company: true,
+          },
+        },
+      },
     });
+
+    // Create notification for seeker
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: application.seekerId,
+          title: "Application Update",
+          message: `Your application for ${application.job.title} at ${application.job.company} has been moved to ${status}.`,
+          type: status === "REJECTED" ? "ERROR" : status === "SHORTLISTED" || status === "OFFER" ? "SUCCESS" : "INFO",
+          link: "/seeker/applications",
+          unread: true,
+        },
+      });
+    } catch (notifError) {
+      console.error("Failed to create status notification:", notifError);
+      // Don't fail the status update if notification fails
+    }
 
     return NextResponse.json(application);
   } catch {
