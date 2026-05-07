@@ -407,6 +407,7 @@ function PipelineContent() {
             applicationId={selectedApp.id}
             seekerName={selectedApp.seeker.name}
             jobTitle={selectedApp.job.title}
+            userRole="EMPLOYER"
           />
         )}
       </motion.div>

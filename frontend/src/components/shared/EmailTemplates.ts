@@ -49,3 +49,51 @@ export const getStatusUpdateEmailHtml = (
     </html>
   `;
 };
+
+export const getInterviewLinkEmailHtml = (
+  seekerName: string,
+  jobTitle: string,
+  companyName: string,
+  meetingLink: string,
+  instructions: string
+) => {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: 'Inter', sans-serif; line-height: 1.6; color: #000000; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; border: 4px solid #000000; padding: 40px; box-shadow: 12px 12px 0px #000000; }
+        .header { border-bottom: 4px solid #000000; padding-bottom: 20px; margin-bottom: 30px; }
+        .title { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin: 0; }
+        .content { font-size: 18px; margin-bottom: 30px; }
+        .instructions { background-color: #f3f4f6; padding: 20px; border: 2px solid #000000; margin-bottom: 30px; font-weight: bold; }
+        .footer { border-top: 4px solid #000000; padding-top: 20px; font-size: 14px; font-weight: bold; }
+        .button { display: inline-block; padding: 16px 32px; background-color: #000000; color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; border: 2px solid #000000; transition: transform 0.1s; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 class="title">RecruitFlow</h1>
+        </div>
+        <div class="content">
+          <p>Hi <strong>${seekerName}</strong>,</p>
+          <p>The employer for <strong>${jobTitle}</strong> at <strong>${companyName}</strong> has shared your interview meeting link.</p>
+          
+          <div class="instructions">
+            <p>Time Instructions:</p>
+            <p>${instructions}</p>
+          </div>
+
+          <a href="${meetingLink}" class="button">Join Meeting</a>
+          <p style="margin-top: 20px; font-size: 14px; color: #666;">If the button above doesn't work, copy and paste this link: ${meetingLink}</p>
+        </div>
+        <div class="footer">
+          &copy; 2026 RecruitFlow. Brutally Simple Hiring.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};

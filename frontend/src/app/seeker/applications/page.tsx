@@ -175,6 +175,7 @@ export default function ApplicationsPage() {
             applicationId={selectedApp.id}
             seekerName={selectedApp.job.company} // For seeker, show company name
             jobTitle={selectedApp.job.title}
+            userRole="SEEKER"
           />
         )}
       </motion.div>

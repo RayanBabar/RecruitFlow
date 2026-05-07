@@ -1,14 +1,12 @@
 "use client";
-
 import { useState, useEffect, useRef, useCallback } from "react";
 import { 
   Dialog, DialogContent, DialogHeader, DialogTitle, 
-  DialogDescription, DialogFooter 
+  DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Send, Calendar, Link as LinkIcon, MessageSquare } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Loader2, Send, Link as LinkIcon, MessageSquare } from "lucide-react";
 
 interface Message {
   id: string;
@@ -27,12 +25,12 @@ interface CommunicationModalProps {
   applicationId: string;
   seekerName: string;
   jobTitle: string;
+  userRole: "EMPLOYER" | "SEEKER";
 }
 
-export function CommunicationModal({ isOpen, onClose, applicationId, seekerName, jobTitle }: CommunicationModalProps) {
+export function CommunicationModal({ isOpen, onClose, applicationId, seekerName, jobTitle, userRole }: CommunicationModalProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -50,12 +48,11 @@ export function CommunicationModal({ isOpen, onClose, applicationId, seekerName,
 
   useEffect(() => {
     if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchMessages();
-      const interval = setInterval(fetchMessages, 5000); // Poll every 5s
+      const interval = setInterval(fetchMessages, 5000);
       return () => clearInterval(interval);
     }
-  }, [isOpen, applicationId]);
+  }, [isOpen, applicationId, fetchMessages]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -91,7 +88,6 @@ export function CommunicationModal({ isOpen, onClose, applicationId, seekerName,
         body: JSON.stringify({ type, metadata }),
       });
       if (res.ok) {
-        // Optionally add a system message to the chat
         setNewMessage(`[Action] Sent ${type.toLowerCase().replace("_", " ")}`);
         handleSendMessage();
       }
@@ -102,7 +98,7 @@ export function CommunicationModal({ isOpen, onClose, applicationId, seekerName,
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl h-[80vh] flex flex-col p-0 gap-0 border-4 border-foreground shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] rounded-none">
+      <DialogContent className="max-w-5xl h-[90vh] flex flex-col p-0 gap-0 border-4 border-foreground shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] rounded-none">
         <DialogHeader className="p-6 border-b-4 border-foreground bg-secondary">
           <DialogTitle className="text-2xl font-black uppercase tracking-tighter">
             Interview Hub: {seekerName}
@@ -112,28 +108,25 @@ export function CommunicationModal({ isOpen, onClose, applicationId, seekerName,
           </DialogDescription>
         </DialogHeader>
 
-        {/* Action Center Bar */}
-        <div className="flex gap-2 p-4 bg-muted border-b-2 border-foreground overflow-x-auto">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => triggerAction("REQUEST_SLOTS", {})}
-            className="rounded-none border-2 border-foreground font-black text-[10px] uppercase h-8 hover:bg-foreground hover:text-background transition-colors"
-          >
-            <Calendar className="w-3 h-3 mr-2" /> Request Slots
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => {
-              const link = window.prompt("Enter Meeting Link (Google Meet/Zoom):");
-              if (link) triggerAction("SEND_LINK", { url: link });
-            }}
-            className="rounded-none border-2 border-foreground font-black text-[10px] uppercase h-8 hover:bg-foreground hover:text-background transition-colors"
-          >
-            <LinkIcon className="w-3 h-3 mr-2" /> Share Meet Link
-          </Button>
-        </div>
+        {/* Action Center Bar - Employer Only */}
+        {userRole === "EMPLOYER" && (
+          <div className="flex gap-2 p-4 bg-muted border-b-2 border-foreground overflow-x-auto">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                const link = window.prompt("Enter Meeting Link (Google Meet/Zoom):");
+                if (!link) return;
+                const instructions = window.prompt("Enter Time/Instructions (e.g., Tomorrow at 2 PM):");
+                if (!instructions) return;
+                triggerAction("SEND_LINK", { url: link, instructions });
+              }}
+              className="rounded-none border-2 border-foreground font-black text-[10px] uppercase h-8 hover:bg-foreground hover:text-background transition-colors"
+            >
+              <LinkIcon className="w-3 h-3 mr-2" /> Share Meet Link
+            </Button>
+          </div>
+        )}
 
         {/* Message Feed */}
         <div 
